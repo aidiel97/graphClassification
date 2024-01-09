@@ -1,15 +1,13 @@
-import helpers.utilities.dataLoader as loader
 import pkg.preProcessing.transform as transform
 import pkg.preProcessing.handlingNull as null
-import pkg.preProcessing.cleansing as cleansing
 import pkg.machineLearning.machineLearning as ml
-import pkg.miner.domain as miner
-import interfaces.cli.dataset as datasetMenu
 
 from helpers.utilities.watcher import *
+from helpers.utilities.dirManagement import checkDir
 from helpers.common.main import *
 
 import pandas as pd
+import os
 
 def preProcessingModule(df):
   #make new label for background prediciton(1/0)
@@ -45,206 +43,139 @@ def preProcessingModule(df):
   
   return df
 
-def predictGraph(ctx, df, algorithm='randomForest'):
+def predict(ctx, df, graphDetail, algorithm='randomForest'):
   start = watcherStart(ctx)
 
-  x = df[[
-    # 'OutDegree','IntensityOutDegree',
-    'InDegree','IntensityInDegree'
-    ]]
+  df.fillna(0, inplace=True)
+  categorical_features=[feature for feature in df.columns if (
+    df[feature].dtypes=='O' or feature =='SensorId' or feature =='ActivityLabel'
+  )]
+  x = df.drop(categorical_features,axis=1)
   y = df['ActivityLabel']
-  predictionResult = ml.classification(x, algorithm)
+  predictionResult = ml.classification(x, graphDetail, algorithm)
+  ctx = ctx+'-'+graphDetail
   ml.evaluation(ctx, y, predictionResult, algorithm)
   
   df['Prediction'] = predictionResult
-  df.to_csv('collections/prediction/out/'+ctx+'-'+algorithm+'.csv', index=False)
+  checkDir('collections/prediction/'+graphDetail+'/')
+  df.to_csv('collections/prediction/'+graphDetail+'/'+ctx+'-'+algorithm+'.csv', index=False)
   watcherEnd(ctx, start)
   return predictionResult
 
-def predict(df, algorithm='randomForest'):
-  ctx = 'Machine Learning Classification'
+def methodEvaluation(dataset, actual_df, predicted_df, method='Proposed Sequence Pattern Miner'):
+  ctx='Method Evaluation'
+  start = watcherStart(ctx)
+  addressPredictedAsBotnet = predicted_df['SrcAddr'].unique()
+
+  actual_df['ActualClass'] = actual_df['Label'].str.contains('botnet', case=False, regex=True)
+  result_df = actual_df.groupby('SrcAddr')['ActualClass'].apply(lambda x: x.mode()[0]).reset_index()
+  result_df.columns = ['SrcAddr','ActualClass']
+  result_df['PredictedClass'] = result_df['SrcAddr'].isin(addressPredictedAsBotnet)
+
+  ml.evaluation(dataset, result_df['ActualClass'], result_df['PredictedClass'], method)
+  watcherEnd(ctx, start)
+
+def modelling(df, graphDetail, algorithm='randomForest'):
+  ctx = 'Modelling with CTU dataset'
   start = watcherStart(ctx)
 
-  df = preProcessingModule(df) # pre-processing
+  df.fillna(0, inplace=True)
   categorical_features=[feature for feature in df.columns if (
     df[feature].dtypes=='O' or feature =='SensorId' or feature =='ActivityLabel'
   )]
   x = df.drop(categorical_features,axis=1)
   y = df['ActivityLabel']
-  predictionResult = ml.classification(x, algorithm)
-  ml.evaluation(ctx, y, predictionResult, algorithm)
-  
-  watcherEnd(ctx, start)
-  return predictionResult
-
-def modellingWithCTU(algorithm='randomForest'):
-  ctx = 'Modelling with CTU dataset'
-  start = watcherStart(ctx)
-
-  #modelling
-  #### PRE DEFINED TRAINING DATASET FROM http://dx.doi.org/10.1016/j.cose.2014.05.011
-  trainDataset = ['scenario3','scenario4','scenario5','scenario7','scenario10','scenario11','scenario12','scenario13']
-  arrayDf = []
-  datasetName = ctu
-  stringDatasetName = 'ctu'
-  for selected in trainDataset:
-    arrayDf.append(loader.binetflow(datasetName, selected, stringDatasetName))
-  df = pd.concat(arrayDf, axis=0)
-  df.reset_index(drop=True, inplace=True)
-  df = preProcessingModule(df) # pre-processing
-  #### PRE DEFINED TRAINING DATASET FROM http://dx.doi.org/10.1016/j.cose.2014.05.011
-
-  categorical_features=[feature for feature in df.columns if (
-    df[feature].dtypes=='O' or feature =='SensorId' or feature =='ActivityLabel'
-  )]
-  x = df.drop(categorical_features,axis=1)
-  y = df['ActivityLabel']
-  ml.modelling(x, y, algorithm)
-  #modelling
-
-  #evaluate
-  datasetName = ctu
-  stringDatasetName = 'ctu'
-  selected = 'scenario7'
-  test_df = loader.binetflow(datasetName, selected, stringDatasetName)
-  predict(test_df, algorithm)
-  #evaluate
-
-  watcherEnd(ctx, start)
-
-def modellingWithCTUGraph(df, algorithm='randomForest'):
-  ctx = 'Modelling with CTU dataset'
-  start = watcherStart(ctx)
-
-  x = df[[
-        # 'OutDegree','IntensityOutDegree',
-        'InDegree','IntensityInDegree'
-          ]]
-  y = df['ActivityLabel']
-  ml.modelling(x, y, algorithm)
+  ml.modelling(x, y, graphDetail, algorithm)
   #modelling
 
   watcherEnd(ctx, start)
 
-def executeAllData():
-  ctx='Machine learning Classification - Execute All Data'
-  start = watcherStart(ctx)
+# def executeAllData():
+#   ctx='Machine learning Classification - Execute All Data'
+#   start = watcherStart(ctx)
 
-  for algo in list(ml.algorithmDict.keys()):
-    modellingWithCTU(algo)
-  ##### loop all dataset
-    for dataset in listAvailableDatasets[:3]:
-      print('\n'+dataset['name'])
-      for scenario in dataset['list']:
-        print(scenario)
-        datasetDetail={
-          'datasetName': dataset['list'],
-          'stringDatasetName': dataset['name'],
-          'selected': scenario
-        }
+#   for algo in list(ml.algorithmDict.keys()):
+#     modellingWithCTU(algo)
+#   ##### loop all dataset
+#     for dataset in listAvailableDatasets[:3]:
+#       print('\n'+dataset['name'])
+#       for scenario in dataset['list']:
+#         print(scenario)
+#         datasetDetail={
+#           'datasetName': dataset['list'],
+#           'stringDatasetName': dataset['name'],
+#           'selected': scenario
+#         }
 
-        raw_df = loader.binetflow(
-          datasetDetail['datasetName'],
-          datasetDetail['selected'],
-          datasetDetail['stringDatasetName'])
+#         raw_df = loader.binetflow(
+#           datasetDetail['datasetName'],
+#           datasetDetail['selected'],
+#           datasetDetail['stringDatasetName'])
 
-        df = raw_df.copy() #get a copy from dataset to prevent processed data
-        result = predict(df, algo)
-        raw_df['predictionResult'] = result
-        new_df = raw_df[raw_df['predictionResult'] == 1]
+#         df = raw_df.copy() #get a copy from dataset to prevent processed data
+#         result = predict(df, algo)
+#         raw_df['predictionResult'] = result
+#         new_df = raw_df[raw_df['predictionResult'] == 1]
         
-        datasetName = datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']
-        miner.methodEvaluation(datasetName, raw_df, new_df, algo)
-  ##### loop all dataset
+#         datasetName = datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']
+#         methodEvaluation(datasetName, raw_df, new_df, algo)
+#   ##### loop all dataset
 
-  watcherEnd(ctx, start)
+#   watcherEnd(ctx, start)
 
-def singleData():
-  ctx='Machine learning Classification - Single Data'
-  start = watcherStart(ctx)
+def trainingAllAlgorithm():
+  arrayDfIn = []
+  arrayDfOut = []
+  ##### loop all dataset (csv)
+  # Specify the directory path
+  directory_path = 'collections/extract/'
 
-  for algo in list(ml.algorithmDict.keys()):
-    # modellingWithCTU(algo)
-    ##### single subDataset
-    # datasetDetail={
-    #   'datasetName': ctu,
-    #   'stringDatasetName': 'ctu',
-    #   'selected': 'scenario11'
-    # }
-    ##### with input menu
-    datasetName, stringDatasetName, selected = datasetMenu.getData()
-    
-    datasetDetail = {
-        'datasetName': datasetName,
-        'stringDatasetName': stringDatasetName,
-        'selected': selected
-    }
-    
-    ##### with input menu
-    raw_df = loader.binetflow(
-      datasetDetail['datasetName'],
-      datasetDetail['selected'],
-      datasetDetail['stringDatasetName'])
+  # Get all file names in the directory
+  file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
 
-    print('\n'+datasetDetail['stringDatasetName'])
-    print(datasetDetail['selected'])
-
-    df = raw_df.copy() #get a copy from dataset to prevent processed data
-    result = predict(df, algo)
-    raw_df['predictionResult'] = result
-    new_df = raw_df[raw_df['predictionResult'] == 1]
-    
-    datasetName = datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']
-    miner.methodEvaluation(datasetName, raw_df, new_df, algo)
-
-def trainingAllAlgorithm():  
-  #modelling
-  #### PRE DEFINED TRAINING DATASET FROM http://dx.doi.org/10.1016/j.cose.2014.05.011
-  trainDataset = ['scenario3','scenario4','scenario5','scenario7','scenario10','scenario11','scenario12','scenario13']
-  arrayDf = []
-  datasetName = nccGraphCTU
-  stringDatasetName = 'nccGraphCTU'
-  for selected in trainDataset:
-    arrayDf.append(loader.binetflow(datasetName, selected, stringDatasetName))
-  df = pd.concat(arrayDf, axis=0)
-  df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
-  df.reset_index(drop=True, inplace=True)
-  #### PRE DEFINED TRAINING DATASET FROM http://dx.doi.org/10.1016/j.cose.2014.05.011
+  # Print the file names
+  print("File names in the directory:")
+  for file_name in file_names:
+    if 'train' in file_name:
+      if 'in' in  file_name:
+        arrayDfIn.append(pd.read_csv(directory_path+file_name))
+      elif 'out' in file_name:
+        arrayDfOut.append(pd.read_csv(directory_path+file_name))
+  
+  dfIn = pd.concat(arrayDfIn, axis=0)
+  dfIn['ActivityLabel'] = dfIn['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+  dfIn.reset_index(drop=True, inplace=True)
+  
+  dfOut = pd.concat(arrayDfOut, axis=0)
+  dfOut['ActivityLabel'] = dfOut['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+  dfOut.reset_index(drop=True, inplace=True)
 
   for algo in list(ml.algorithmDict.keys()):
-    modellingWithCTUGraph(df, algo)
-    # modellingWithCTU(algo)
+    modelling(dfIn, 'in', algo)
+    modelling(dfOut, 'out', algo)
 
 def executeAllDataGraph():
   ctx='Graph Classification - Execute All Data'
   start = watcherStart(ctx)
-  ##### loop all dataset
-  arrayDf = []
-  for dataset in listAvailableGraphDatasets:
-    print('\n'+dataset['name'])
-    for scenario in dataset['list']:
-      print(scenario)
-      datasetDetail={
-        'datasetName': dataset['list'],
-        'stringDatasetName': dataset['name'],
-        'selected': scenario
-      }
+  ##### loop all dataset (csv)
+  # Specify the directory path
+  directory_path = 'collections/extract/'
 
-      # raw_df = loader.binetflow(
-      #   datasetDetail['datasetName'],
-      #   datasetDetail['selected'],
-      #   datasetDetail['stringDatasetName'])
-      # df = raw_df.copy() #get a copy from dataset to prevent processed data
-      arrayDf.append(loader.binetflow(datasetDetail['datasetName'], datasetDetail['selected'], datasetDetail['stringDatasetName']))
-  
-  df = pd.concat(arrayDf, axis=0)
-  df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
-  train, test = loader.splitDataFrameWithProportion(df)
+  # Get all file names in the directory
+  file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
 
-  predictCtx = 'NCC-Graph-v4'
+  # Print the file names
+  predictCtx = 'Graph Classification'
   for algo in list(ml.algorithmDict.keys()):
-    modellingWithCTUGraph(train, algo)
-    predictGraph(predictCtx, test, algo)
+    for file_name in file_names:
+      if 'test' in file_name:
+        df = pd.read_csv(directory_path+file_name)
+        df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+        df.reset_index(drop=True, inplace=True)
+        if 'in' in  file_name:
+          predict(predictCtx, df, 'in', algo)
+        elif 'out' in file_name:
+          predict(predictCtx, df, 'out', algo)
   ##### loop all dataset
 
   watcherEnd(ctx, start)

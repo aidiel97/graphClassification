@@ -12,9 +12,8 @@ import pkg.datasetAnalysis.domain as analysis
 if __name__ == "__main__":
   listMenu = [
     ('Split dataset and get optimal time gap', analysis.splitAndTimeGap),
-    ('Generate Graph Dataset (from specific dataset)', grp.singleData),
-    ('Generate Graph Dataset (from all dataset)', grp.executeAllData),
-    ('Generate Machine Learning Models', ml.trainingAllAlgorithm),
-    ('Classified Network Graph', ml.executeAllDataGraph),
+    ('Generate graph dataset (from all dataset)', grp.executeAllData),
+    ('Training the graph dataset', ml.trainingAllAlgorithm),
+    ('Classified network graph', ml.executeAllDataGraph),
   ]
   cli.menu(listMenu)

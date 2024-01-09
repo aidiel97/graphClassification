@@ -1,16 +1,10 @@
-import networkx as nx
 import pandas as pd
-from tqdm import tqdm
-import time
-
-import helpers.utilities.dataLoader as loader
-import pkg.preProcessing.transform as pp
 
 from helpers.utilities.watcher import *
 from helpers.common.main import *
-from helpers.utilities.csvGenerator import exportWithArrayOfObject
 from pkg.graph.models import *
 from pkg.graph.generator import *
+from helpers.utilities.dirManagement import checkDir
 
 def extractGraph(df, datasetDetail):
     ctx = 'Graph based analysis - Graph to Tabular'
@@ -72,6 +66,7 @@ def extractGraph(df, datasetDetail):
     dst_df['Label'] = dst_df['Address'].apply(lambda x: 'botnet' if x in listBotnetAddress else 'normal')
     dst_df = dst_df[['Address'] + [col for col in dst_df.columns if col != 'Address']]
     
+    checkDir('collections/extract/')
     # FOR EXPORT, check the variable is string or dictionary
     if isinstance(datasetDetail, str):
         datasetName = datasetDetail.replace("collections/split/", "")

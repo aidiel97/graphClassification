@@ -14,10 +14,10 @@ from sklearn.metrics import confusion_matrix
 
 algorithmDict = {
   'decisionTree': DecisionTreeClassifier(),
-  'randomForest': RandomForestClassifier(),
-  'naiveBayes': GaussianNB(),
-  'logisticRegression' : LogisticRegression(),
-  'xGBoost': GradientBoostingClassifier(),
+  # 'randomForest': RandomForestClassifier(),
+  # 'naiveBayes': GaussianNB(),
+  # 'logisticRegression' : LogisticRegression(),
+  # 'xGBoost': GradientBoostingClassifier(),
   # 'svc' : SVC(),
   # 'knn': KNeighborsClassifier(),
   # 'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
@@ -25,21 +25,21 @@ algorithmDict = {
 
 def modelFileName(algorithm): return 'collections/'+algorithm+'.pkl'
 
-def modelling(x, y, algorithm='randomForest'):
+def modelling(x, y, graphDetail, algorithm='randomForest'):
   ctx= 'Training Model With: '+algorithm.upper()
   start= watcherStart(ctx)
 
   model = algorithmDict[algorithm]
   model.fit(x, y)
-  pickle.dump(model, open(modelFileName(algorithm), 'wb'))
+  pickle.dump(model, open(modelFileName(algorithm+'-'+graphDetail), 'wb'))
 
   watcherEnd(ctx, start)
 
-def classification(x, algorithm='randomForest'):
+def classification(x, graphDetail, algorithm='randomForest'):
   ctx= 'Classifying Data - '+algorithm
   start= watcherStart(ctx)
 
-  model = pickle.load(open(modelFileName(algorithm), 'rb'))
+  model = pickle.load(open(modelFileName(algorithm+'-'+graphDetail), 'rb'))
   predictionResult = model.predict(x)
 
   watcherEnd(ctx, start)

@@ -5,15 +5,11 @@ import time
 import os
 
 import helpers.utilities.dataLoader as loader
-import pkg.preProcessing.transform as pp
 import pkg.machineLearning.machineLearning as ml
 import interfaces.cli.dataset as datasetMenu
 
 from helpers.utilities.watcher import *
 from helpers.common.main import *
-from helpers.utilities.dataLoader import splitTestAllDataframe
-from helpers.utilities.database import *
-from helpers.utilities.csvGenerator import exportWithArrayOfObject
 from pkg.graph.models import *
 from pkg.graph.generator import *
 from pkg.graph.handler import *
@@ -60,27 +56,6 @@ def graphClassificationModelling():
     scaler.fit(x)
     x = scaler.transform(x)
 
-    # from sklearn.decomposition import PCA
-    # pca = PCA().fit(x)
-    # plt.plot(pca.explained_variance_ratio_.cumsum(), lw=3, color='#087E8B')
-    # plt.title('Cumulative explained variance by number of principal components', size=20)
-    # plt.savefig('collections/pca.png', bbox_inches='tight')
-    
-    # loadings = pd.DataFrame(
-    #     data=pca.components_.T * np.sqrt(pca.explained_variance_), 
-    #     columns=[f'PC{i}' for i in range(1, len(x.columns) + 1)],
-    #     index=x.columns
-    # )
-    # loadings.head()
-    # pc1_loadings = loadings.sort_values(by='PC1', ascending=False)[['PC1']]
-    # pc1_loadings = pc1_loadings.reset_index()
-    # pc1_loadings.columns = ['Attribute', 'CorrelationWithPC1']
-
-    # plt.bar(x=pc1_loadings['Attribute'], height=pc1_loadings['CorrelationWithPC1'], color='#087E8B')
-    # plt.title('PCA loading scores (first principal component)', size=20)
-    # plt.xticks(rotation='vertical')
-    # plt.savefig('collections/pca-loadingScores.png', bbox_inches='tight')
-
     ml.modelling(x, y, algorithm)
     
     test_df = loader.binetflow(nccGraphCTU, 'scenario9', 'nccGraphCTU')
@@ -103,39 +78,6 @@ def graphClassificationModelling():
 
     watcherEnd(ctx, start)
 
-def singleData():
-    ctx = 'Graph based analysis - Single Dataset'
-    start = watcherStart(ctx)
-    datasetName, stringDatasetName, selected = datasetMenu.getData()
-    datasetDetail = {
-        'datasetName': datasetName,
-        'stringDatasetName': stringDatasetName,
-        'selected': selected
-    }
-    
-    dftoGraph(datasetDetail)
-
-    # df = pd.DataFrame(objData.values())
-    # df = df.fillna(0)
-    # train, test = splitTestAllDataframe(df,0.7)
-    # x_train = train.drop(['Label','ActivityLabel', 'Address'],axis=1)
-    # y_train = train['ActivityLabel']
-    
-    # x_test = test.drop(['Label','ActivityLabel', 'Address'],axis=1)
-    # y_test = test['ActivityLabel']
-    
-    # ml.modelling(x_train, y_train, 'knn')
-    # predictionResult = ml.classification(x_test, 'knn')
-    # print(predictionResult)
-    # ml.evaluation(ctx, y_test, predictionResult, 'knn')
-
-    # ##### visualize
-    # exportGraph(G, 'collections/graph.png')
-    # exportGraph(NG, 'collections/weighted-graph.png')
-    # ##### visualize
-
-    watcherEnd(ctx, start)
-    
 def executeAllData():
   ctx='Graph based analysis - Execute All Data'
   start = watcherStart(ctx)
