@@ -2,6 +2,7 @@ import time
 import csv
 
 from helpers.utilities.dirManagement import checkDir
+from datetime import datetime
 
 def watcherStart(processName):
   start = time.time()
@@ -17,8 +18,8 @@ def watcherEnd(processName, start=time.time(), record=False):
     field_names = ['ProcessName','StartAt','EndAt','ProcessingTime']
     dict = {
       "ProcessName": processName,
-      "StartAt":start,
-      "EndAt":end,
+      "StartAt":datetime.fromtimestamp(start),
+      "EndAt":datetime.fromtimestamp(end),
       "ProcessingTime": end-start,
     }
 
