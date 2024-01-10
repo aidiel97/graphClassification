@@ -86,7 +86,7 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   backgroundDiff[datasetVariableName] = tgBackground
   normalDiff[datasetVariableName] = tgNormal
 
-  watcherEnd(ctx, start)
+  watcherEnd(ctx, start, True)
 
 def equateListLength(dct):
   max_length = max(len(lst) for lst in dct.values())

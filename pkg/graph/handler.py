@@ -70,4 +70,4 @@ def dftoGraph(datasetDetail):
 
     extractGraph(raw_df, datasetDetail)
 
-    watcherEnd(ctx, start)
+    watcherEnd(ctx, start, True)
