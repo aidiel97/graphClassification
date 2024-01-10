@@ -58,7 +58,7 @@ def main(feature):
   normalDf.describe().transpose().to_csv('collections/'+feature+'-normal-describe.csv')
 
 def flow(datasetName, stringDatasetName, shortName, selected, feature):
-  ctx=feature+' Analysis with statistical approach '+stringDatasetName+'-'+selected
+  ctx=feature+' Analysis with statistical approach '+shortName+'-'+selected
   start = watcherStart(ctx)
   sequenceOf = 'SrcAddr'
 
