@@ -70,8 +70,8 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
 
   checkDir('collections/split/')
   train, test = loader.splitDataFrameWithIndex(df)
-  train.to_csv('collections/split/'+shortName+'-'+selected+'-train.csv', index=False, header=False)
-  test.to_csv('collections/split/'+shortName+'-'+selected+'-test.csv', index=False, header=False)
+  train.to_csv('collections/split/'+shortName+'-'+selected+'-train.csv', index=False, header=True)
+  test.to_csv('collections/split/'+shortName+'-'+selected+'-test.csv', index=False, header=True)
 
   botnet = train[train['ActivityLabel'] == 'botnet']
   normal = train[train['ActivityLabel'] == 'normal']

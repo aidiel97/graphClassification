@@ -58,12 +58,12 @@ ctu = {
 }
 
 ncc = {
-  'scenario1': datasetLocation+nccLoc+'/scenario_dataset_1/dataset_result.binetflow',
-  'scenario2': datasetLocation+nccLoc+'/scenario_dataset_2/dataset_result.binetflow',
-  'scenario3': datasetLocation+nccLoc+'/scenario_dataset_3/dataset_result.binetflow',
-  'scenario4': datasetLocation+nccLoc+'/scenario_dataset_4/dataset_result.binetflow',
-  'scenario5': datasetLocation+nccLoc+'/scenario_dataset_5/dataset_result.binetflow',
-  'scenario6': datasetLocation+nccLoc+'/scenario_dataset_6/dataset_result.binetflow',
+  # 'scenario1': datasetLocation+nccLoc+'/scenario_dataset_1/dataset_result.binetflow',
+  # 'scenario2': datasetLocation+nccLoc+'/scenario_dataset_2/dataset_result.binetflow',
+  # 'scenario3': datasetLocation+nccLoc+'/scenario_dataset_3/dataset_result.binetflow',
+  # 'scenario4': datasetLocation+nccLoc+'/scenario_dataset_4/dataset_result.binetflow',
+  # 'scenario5': datasetLocation+nccLoc+'/scenario_dataset_5/dataset_result.binetflow',
+  # 'scenario6': datasetLocation+nccLoc+'/scenario_dataset_6/dataset_result.binetflow',
   'scenario7': datasetLocation+nccLoc+'/scenario_dataset_7/dataset_result.binetflow',
   'scenario8': datasetLocation+nccLoc+'/scenario_dataset_8/dataset_result.binetflow',
   'scenario9': datasetLocation+nccLoc+'/scenario_dataset_9/dataset_result.binetflow',
