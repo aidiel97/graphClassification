@@ -8,18 +8,19 @@ from pkg.graph.generator import *
 from pkg.graph.extractor import *
 
 def dftoGraph(datasetDetail):
-    ctx = 'Graph based analysis - DF to Graph'
-    start = watcherStart(ctx)
-
+    ctx = 'Graph based analysis - convert DF to Graph '
     # check the variable is string or dictionary
     if isinstance(datasetDetail, str):
         raw_df = loader.rawCsv(datasetDetail)
+        ctx = ctx+datasetDetail
     else:
+        ctx = ctx+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']
         raw_df = loader.binetflow(
             datasetDetail['datasetName'],
             datasetDetail['selected'],
             datasetDetail['stringDatasetName'])
     
+    start = watcherStart(ctx)
     raw_df['Unix'] = raw_df['StartTime'].apply(pp.timeToUnix).fillna(0)
     
     # Function to calculate the "Diff" column
