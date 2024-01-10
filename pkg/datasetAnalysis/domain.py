@@ -18,17 +18,16 @@ def splitAndTimeGap(): main('Diff')
 def SrcBytes(): main('SrcBytes')
 
 def main(feature):
-  # for dataset in listAvailableDatasets[:3]:
-  #   print('\n'+dataset['name'])
-  dataset = listAvailableDatasets[2]
-  for scenario in dataset['list']:
-    print(scenario)
-    dataset = {
-      'list': dataset['list'],
-      'name': dataset['name'],
-      'shortName': dataset['shortName']
-    }
-    flow(dataset['list'], dataset['name'], dataset['shortName'], scenario, feature)
+  for dataset in listAvailableDatasets[:3]:
+    print('\n'+dataset['name'])
+    for scenario in dataset['list']:
+      print(scenario)
+      dataset = {
+        'list': dataset['list'],
+        'name': dataset['name'],
+        'shortName': dataset['shortName']
+      }
+      flow(dataset['list'], dataset['name'], dataset['shortName'], scenario, feature)
 
   # Create a boxplot
   plt.figure()
