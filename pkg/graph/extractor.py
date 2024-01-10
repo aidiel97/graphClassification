@@ -38,6 +38,7 @@ def extractGraph(df, datasetDetail):
     src_df.fillna(0)
     src_df['Address'] = src_df['Src-Id'].str.split('-').str[0]
     src_df['Label'] = src_df['Address'].apply(lambda x: 'botnet' if x in listBotnetAddress else 'normal')
+    src_df['SequenceId'] = src_df['Src-Id']
     src_df = src_df[['Address'] + [col for col in src_df.columns if col != 'Address']]
 
     #in degree
@@ -64,6 +65,7 @@ def extractGraph(df, datasetDetail):
     dst_df.fillna(0)
     dst_df['Address'] = dst_df['Dst-Id'].str.split('-').str[0]
     dst_df['Label'] = dst_df['Address'].apply(lambda x: 'botnet' if x in listBotnetAddress else 'normal')
+    dst_df['SequenceId'] = dst_df['Dst-Id']
     dst_df = dst_df[['Address'] + [col for col in dst_df.columns if col != 'Address']]
     
     checkDir('collections/extract/')

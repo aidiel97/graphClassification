@@ -11,7 +11,7 @@ def dftoGraph(datasetDetail):
     ctx = 'Graph based analysis - DF to Graph'
     start = watcherStart(ctx)
 
-    # check the varaible is string or dictionary
+    # check the variable is string or dictionary
     if isinstance(datasetDetail, str):
         raw_df = loader.rawCsv(datasetDetail)
     else:
