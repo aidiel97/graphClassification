@@ -21,16 +21,6 @@ def dftoGraph(datasetDetail):
             datasetDetail['stringDatasetName'])
     
     start = watcherStart(ctx)
-    raw_df['Unix'] = raw_df['StartTime'].apply(pp.timeToUnix).fillna(0)
-    
-    # Function to calculate the "Diff" column
-    def calculate_diff(row):
-        index = row.name
-        if index > 0 and raw_df.loc[index, 'SrcAddr'] == raw_df.loc[index - 1, 'SrcAddr']:
-            return row['Unix'] - raw_df.loc[index - 1, 'Unix']
-        return None
-    
-    raw_df['Diff'] = raw_df.apply(calculate_diff, axis=1)
 
     # Initialize variables
     x = 0

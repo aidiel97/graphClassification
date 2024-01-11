@@ -61,15 +61,22 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   ctx=feature+' Analysis with statistical approach '+shortName+'-'+selected
   start = watcherStart(ctx)
   sequenceOf = 'SrcAddr'
-
+  
+  checkDir('collections/split/')
   df = loader.binetflow(datasetName, selected, stringDatasetName)
   df['ActivityLabel'] = df['Label'].apply(preProcessing.labelSimplier)
   df['Unix'] = df['StartTime'].apply(preProcessing.timeToUnix).fillna(0)
-  df = df.sort_values(by=[sequenceOf, 'StartTime', 'ActivityLabel'])
-  df['Diff'] = df['Unix'].diff().apply(lambda x: x if x >= 0 else None)
-
-  checkDir('collections/split/')
   train, test = loader.splitDataFrameWithIndex(df)
+
+  # generate diff feature on test data
+  train = train.sort_values(by=[sequenceOf, 'Unix'])
+  train = preProcessing.calculate_diff(train)
+  
+  # generate diff feature on test data
+  test = test.sort_values(by=[sequenceOf, 'Unix'])
+  test = preProcessing.calculate_diff(test)
+
+  # export the data
   train.to_csv('collections/split/'+shortName+'-'+selected+'-train.csv', index=False, header=True)
   test.to_csv('collections/split/'+shortName+'-'+selected+'-test.csv', index=False, header=True)
 

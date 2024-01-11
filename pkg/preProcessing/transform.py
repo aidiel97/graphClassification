@@ -19,6 +19,24 @@ def ipToInteger(ip):
   except OSError:
     return np.nan #return NaN when IP Address is not valid
   
+def calculate_diff(df):
+  # Initialize an empty list to store the calculated differences
+  diff_values = []
+
+  # Iterate over the DataFrame
+  for i in range(len(df)):
+      if i > 0 and df['SrcAddr'].iloc[i] == df['SrcAddr'].iloc[i - 1]:
+          diff_values.append(df['Unix'].iloc[i] - df['Unix'].iloc[i - 1])
+      else:
+          # If the condition is not met, append None
+          diff_values.append(None)
+
+  # Create a new column 'Diff' in the DataFrame and assign the calculated differences
+  df['Diff'] = diff_values
+
+  # Return the entire DataFrame with the new 'Diff' column
+  return df
+
 def timeToUnix(startTime):
   # date_format = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')
   # unix_time = datetime.timestamp(date_format)
