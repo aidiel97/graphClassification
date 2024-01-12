@@ -138,12 +138,14 @@ def trainingAllAlgorithm():
   # Print the file names
   print("File names in the directory:")
   for file_name in file_names:
-    if 'train' in file_name:
-      if 'in' in  file_name:
+    if '-train' in file_name:
+      if '-in.csv' in  file_name:
+        print(directory_path+file_name)
         arrayDfIn.append(pd.read_csv(directory_path+file_name))
-      elif 'out' in file_name:
+      elif '-out.csv' in file_name:
         arrayDfOut.append(pd.read_csv(directory_path+file_name))
   
+  exit()
   dfIn = pd.concat(arrayDfIn, axis=0)
   dfIn['ActivityLabel'] = dfIn['Label'].str.contains('botnet', case=False, regex=True).astype(int)
   dfIn.reset_index(drop=True, inplace=True)
