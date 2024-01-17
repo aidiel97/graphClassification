@@ -53,12 +53,11 @@ def predict(ctx, df, graphDetail, algorithm='randomForest'):
   x = df.drop(categorical_features,axis=1)
   y = df['ActivityLabel']
   predictionResult = ml.classification(x, graphDetail, algorithm)
-  ctx = ctx+'-'+graphDetail
   ml.evaluation(ctx, y, predictionResult, algorithm)
   
   df['Prediction'] = predictionResult
   checkDir('collections/prediction/'+graphDetail+'/')
-  df.to_csv('collections/prediction/'+graphDetail+'/'+ctx+'-'+algorithm+'.csv', index=False)
+  df.to_csv('collections/prediction/'+graphDetail+'/'+ctx+'.csv', index=False)
 
   ctx = ctx+' '+graphDetail+'-degree'
   watcherEnd(ctx, start, True)
@@ -167,14 +166,16 @@ def executeAllDataGraph():
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
 
   # Print the file names
-  predictCtx = 'Graph Classification with '
+  generalCtx = 'graph-'
   for algo in list(ml.algorithmDict.keys()):
     for file_name in file_names:
       if 'test' in file_name:
         df = pd.read_csv(directory_path+file_name)
         df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
         df.reset_index(drop=True, inplace=True)
-        predictCtx = predictCtx + algo
+        
+        file_name = file_name.replace("-test","")
+        predictCtx = generalCtx + algo + '-' + file_name.replace(".csv","")
         if 'in' in  file_name:
           predict(predictCtx, df, 'in', algo)
         elif 'out' in file_name:
