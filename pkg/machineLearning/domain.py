@@ -57,12 +57,9 @@ def predict(ctx, df, graphDetail, algorithm='randomForest'):
   ml.evaluation(ctx, y, predictionResult, algorithm)
   
   df['Prediction'] = predictionResult
-  checkDir(OUT_DIR+'prediction/'+graphDetail+'/')
-  df.to_csv(OUT_DIR+'prediction/'+graphDetail+'/'+ctx+'.csv', index=False)
-
   ctx = ctx+' '+graphDetail+'-degree'
   watcherEnd(ctx, start, True)
-  return predictionResult
+  return df[['Address', 'Prediction']].copy()
 
 def methodEvaluation(dataset, actual_df, predicted_df, method='Proposed Sequence Pattern Miner'):
   ctx='Method Evaluation'
@@ -78,7 +75,7 @@ def methodEvaluation(dataset, actual_df, predicted_df, method='Proposed Sequence
   watcherEnd(ctx, start)
 
 def modelling(df, graphDetail, algorithm='randomForest'):
-  ctx = 'Modelling with '+ algorithm + ' algorithm'
+  ctx = 'Modelling with '+ algorithm + ' algorithm ' + graphDetail
   start = watcherStart(ctx)
 
   df.fillna(0, inplace=True)
@@ -91,39 +88,6 @@ def modelling(df, graphDetail, algorithm='randomForest'):
   #modelling
 
   watcherEnd(ctx, start, True)
-
-# def executeAllData():
-#   ctx='Machine learning Classification - Execute All Data'
-#   start = watcherStart(ctx)
-
-#   for algo in list(ml.algorithmDict.keys()):
-#     modellingWithCTU(algo)
-#   ##### loop all dataset
-#     for dataset in listAvailableDatasets[:3]:
-#       print('\n'+dataset['name'])
-#       for scenario in dataset['list']:
-#         print(scenario)
-#         datasetDetail={
-#           'datasetName': dataset['list'],
-#           'stringDatasetName': dataset['name'],
-#           'selected': scenario
-#         }
-
-#         raw_df = loader.binetflow(
-#           datasetDetail['datasetName'],
-#           datasetDetail['selected'],
-#           datasetDetail['stringDatasetName'])
-
-#         df = raw_df.copy() #get a copy from dataset to prevent processed data
-#         result = predict(df, algo)
-#         raw_df['predictionResult'] = result
-#         new_df = raw_df[raw_df['predictionResult'] == 1]
-        
-#         datasetName = datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']
-#         methodEvaluation(datasetName, raw_df, new_df, algo)
-#   ##### loop all dataset
-
-#   watcherEnd(ctx, start)
 
 def trainingAllAlgorithm():
   arrayDfIn = []
@@ -161,7 +125,7 @@ def executeAllDataGraph():
   start = watcherStart(ctx)
   ##### loop all dataset (csv)
   # Specify the directory path
-  directory_path = OUT_DIR+'extract/'
+  directory_path = OUT_DIR+'extract/test/'
 
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
@@ -170,17 +134,28 @@ def executeAllDataGraph():
   generalCtx = 'graph-'
   for algo in list(ml.algorithmDict.keys()):
     for file_name in file_names:
-      if 'test' in file_name:
-        df = pd.read_csv(directory_path+file_name)
-        df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
-        df.reset_index(drop=True, inplace=True)
-        
-        file_name = file_name.replace("-test","")
-        predictCtx = generalCtx + algo + '-' + file_name.replace(".csv","")
-        if 'in' in  file_name:
-          predict(predictCtx, df, 'in', algo)
-        elif 'out' in file_name:
-          predict(predictCtx, df, 'out', algo)
+      df = pd.read_csv(directory_path+file_name)
+      df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+      df.reset_index(drop=True, inplace=True)
+      
+      file_name = file_name.replace("-test","")
+      predictCtx = generalCtx + algo + '-' + file_name.replace(".csv","")
+      if 'in' in  file_name:
+        indf = predict(predictCtx, df, 'in', algo)
+        print(indf)
+      elif 'out' in file_name:
+        outdf = predict(predictCtx, df, 'out', algo)
+        print(outdf)
+
+      combined_df = pd.concat([indf, outdf], ignore_index=True)
+      result_df = combined_df.groupby(['Address', 'Prediction']).size().unstack(fill_value=0)
+      result_df.columns = [f"predict-{col}" for col in result_df.columns]
+      result_df = result_df.reset_index()
+      checkDir(OUT_DIR+'prediction/')
+      df.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
+
+
+
   ##### loop all dataset
 
   watcherEnd(ctx, start)

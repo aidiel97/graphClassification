@@ -84,14 +84,26 @@ def executeAllData():
 
   ##### loop all dataset (csv)
   # Specify the directory path
-  directory_path = OUT_DIR+'split/'
+  train_directory_path = OUT_DIR+'split/train/'
 
   # Get all file names in the directory
-  file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
+  file_names = [f for f in os.listdir(train_directory_path) if os.path.isfile(os.path.join(train_directory_path, f))]
 
   # Print the file names
   print("File names in the directory:")
   for file_name in file_names:
-      dftoGraph(directory_path+file_name)
+      dftoGraph(train_directory_path+file_name)
+    
+  ##### loop all dataset (csv)
+  # Specify the directory path
+  test_directory_path = OUT_DIR+'split/test/'
+
+  # Get all file names in the directory
+  file_names = [f for f in os.listdir(test_directory_path) if os.path.isfile(os.path.join(test_directory_path, f))]
+
+  # Print the file names
+  print("File names in the directory:")
+  for file_name in file_names:
+      dftoGraph(test_directory_path+file_name)
 
   watcherEnd(ctx, start)

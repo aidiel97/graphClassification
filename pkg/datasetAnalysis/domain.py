@@ -5,6 +5,7 @@ from helpers.utilities.watcher import *
 from helpers.common.main import *
 from helpers.utilities.dirManagement import *
 from helpers.utilities.csvGenerator import *
+from helpers.utilities.dirManagement import checkDir
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -77,8 +78,10 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   test = preProcessing.calculate_diff(test)
 
   # export the data
-  train.to_csv(OUT_DIR+'split/'+shortName+'-'+selected+'-train.csv', index=False, header=True)
-  test.to_csv(OUT_DIR+'split/'+shortName+'-'+selected+'-test.csv', index=False, header=True)
+  checkDir(OUT_DIR+'split/train/')
+  checkDir(OUT_DIR+'split/test/')
+  train.to_csv(OUT_DIR+'split/train/'+shortName+'-'+selected+'.csv', index=False, header=True)
+  test.to_csv(OUT_DIR+'split/test/'+shortName+'-'+selected+'.csv', index=False, header=True)
 
   botnet = train[train['ActivityLabel'] == 'botnet']
   normal = train[train['ActivityLabel'] == 'normal']

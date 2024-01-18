@@ -47,6 +47,7 @@ def classification(x, graphDetail, algorithm='randomForest'):
   return predictionResult
 
 def evaluation(ctx, y, predictionResult, algorithm='randomForest'):
+  print(confusion_matrix(y, predictionResult))
   tn, fp, fn, tp = confusion_matrix(y, predictionResult).ravel()
 
   print('\nAlgorithm\t\t\t: '+algorithm)

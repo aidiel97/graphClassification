@@ -71,10 +71,18 @@ def extractGraph(df, datasetDetail):
     checkDir(OUT_DIR+'extract/')
     # FOR EXPORT, check the variable is string or dictionary
     if isinstance(datasetDetail, str):
-        datasetName = datasetDetail.replace("collections/split/", "")
+        datasetName = datasetDetail.replace(OUT_DIR+"split/", "")
         datasetName = datasetName.replace(".csv", "")
-        src_df.to_csv(OUT_DIR+'extract/'+datasetName+'-out.csv', index=False)
-        dst_df.to_csv(OUT_DIR+'extract/'+datasetName+'-in.csv', index=False)
+        detailData = "test/"
+        if "train/" in datasetName:
+            datasetName = datasetName.replace("train/","")
+            detailData = "train/"
+        else:
+            datasetName = datasetName.replace("test/","")
+
+        checkDir(OUT_DIR+'extract/'+detailData)
+        src_df.to_csv(OUT_DIR+'extract/'+detailData+datasetName+'-out.csv', index=False)
+        dst_df.to_csv(OUT_DIR+'extract/'+detailData+datasetName+'-in.csv', index=False)
     else:
         src_df.to_csv(OUT_DIR+'extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-out.csv', index=False)
         dst_df.to_csv(OUT_DIR+'extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-in.csv', index=False)

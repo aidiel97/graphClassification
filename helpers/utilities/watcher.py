@@ -3,6 +3,7 @@ import csv
 
 from helpers.utilities.dirManagement import checkDir
 from datetime import datetime
+from helpers.common.globalConfig import OUT_DIR
 
 def watcherStart(processName):
   start = time.time()
