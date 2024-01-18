@@ -42,19 +42,19 @@ ctuOnline = {
 }
 
 ctu = {
-  # 'scenario1': datasetLocation+ctuLoc+'/1/capture20110810.binetflow',
-  # 'scenario2': datasetLocation+ctuLoc+'/2/capture20110811.binetflow',
-  # 'scenario3': datasetLocation+ctuLoc+'/3/capture20110812.binetflow',
-  # 'scenario4': datasetLocation+ctuLoc+'/4/capture20110815.binetflow',
-  # 'scenario5': datasetLocation+ctuLoc+'/5/capture20110815-2.binetflow',
-  # 'scenario6': datasetLocation+ctuLoc+'/6/capture20110816.binetflow',
+  'scenario1': datasetLocation+ctuLoc+'/1/capture20110810.binetflow',
+  'scenario2': datasetLocation+ctuLoc+'/2/capture20110811.binetflow',
+  'scenario3': datasetLocation+ctuLoc+'/3/capture20110812.binetflow',
+  'scenario4': datasetLocation+ctuLoc+'/4/capture20110815.binetflow',
+  'scenario5': datasetLocation+ctuLoc+'/5/capture20110815-2.binetflow',
+  'scenario6': datasetLocation+ctuLoc+'/6/capture20110816.binetflow',
   'scenario7': datasetLocation+ctuLoc+'/7/capture20110816-2.binetflow',
-  # 'scenario8': datasetLocation+ctuLoc+'/8/capture20110816-3.binetflow',
-  # 'scenario9': datasetLocation+ctuLoc+'/9/capture20110817.binetflow',
-  # 'scenario10': datasetLocation+ctuLoc+'/10/capture20110818.binetflow',
-  # 'scenario11': datasetLocation+ctuLoc+'/11/capture20110818-2.binetflow',
-  # 'scenario12': datasetLocation+ctuLoc+'/12/capture20110819.binetflow',
-  # 'scenario13': datasetLocation+ctuLoc+'/13/capture20110815-3.binetflow',
+  'scenario8': datasetLocation+ctuLoc+'/8/capture20110816-3.binetflow',
+  'scenario9': datasetLocation+ctuLoc+'/9/capture20110817.binetflow',
+  'scenario10': datasetLocation+ctuLoc+'/10/capture20110818.binetflow',
+  'scenario11': datasetLocation+ctuLoc+'/11/capture20110818-2.binetflow',
+  'scenario12': datasetLocation+ctuLoc+'/12/capture20110819.binetflow',
+  'scenario13': datasetLocation+ctuLoc+'/13/capture20110815-3.binetflow',
 }
 
 ncc = {
@@ -122,26 +122,26 @@ nccGraphNCC2 = {
 }
 
 listAvailableDatasets=[
-  # {
-  #   'name':'NCC (Periodic Botnet)',
-  #   'shortName': 'ncc',
-  #   'list': ncc
-  # },
-  # {
-  #   'name':'NCC-2 (Simultaneous Botnet)',
-  #   'shortName': 'ncc2',
-  #   'list': ncc2
-  # },
+  {
+    'name':'NCC (Periodic Botnet)',
+    'shortName': 'ncc',
+    'list': ncc
+  },
+  {
+    'name':'NCC-2 (Simultaneous Botnet)',
+    'shortName': 'ncc2',
+    'list': ncc2
+  },
   {
     'name':'CTU-13 (Local Source)',
     'shortName': 'ctu',
     'list': ctu
   },
-  # {
-  #   'name':'CTU-13 (Online Source)',
-  #   'shortName': 'ctu',
-  #   'list': ctuOnline
-  # },
+  {
+    'name':'CTU-13 (Online Source)',
+    'shortName': 'ctu',
+    'list': ctuOnline
+  },
 ]
 
 listAvailableGraphDatasets=[
