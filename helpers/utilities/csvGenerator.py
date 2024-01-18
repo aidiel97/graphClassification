@@ -41,7 +41,7 @@ def classificationResult(classificationContext, algorithm, tn, fp, fn, tp):
     "TP": tp
   }
 
-  with open('collections/classification_results.csv', 'a', newline='') as csv_file:
+  with open(OUT_DIR+'classification_results.csv', 'a', newline='') as csv_file:
     dict_object = csv.DictWriter(csv_file, fieldnames=field_names) 
     dict_object.writerow(dict)
 

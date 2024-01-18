@@ -23,8 +23,8 @@ def watcherEnd(processName, start=time.time(), record=False):
       "ProcessingTime": end-start,
     }
 
-    checkDir('collections/')
-    with open('collections/ActivityLog.csv', 'a', newline='') as csv_file:
+    checkDir(OUT_DIR+'')
+    with open(OUT_DIR+'ActivityLog.csv', 'a', newline='') as csv_file:
       dict_object = csv.DictWriter(csv_file, fieldnames=field_names) 
       dict_object.writerow(dict)
   

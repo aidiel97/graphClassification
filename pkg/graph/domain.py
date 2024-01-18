@@ -84,7 +84,7 @@ def executeAllData():
 
   ##### loop all dataset (csv)
   # Specify the directory path
-  directory_path = 'collections/split/'
+  directory_path = OUT_DIR+'split/'
 
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]

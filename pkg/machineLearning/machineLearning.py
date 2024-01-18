@@ -18,12 +18,12 @@ algorithmDict = {
   'naiveBayes': GaussianNB(),
   'logisticRegression' : LogisticRegression(),
   'xGBoost': GradientBoostingClassifier(),
-  'svc' : SVC(),
-  'knn': KNeighborsClassifier(),
-  'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
+  # 'svc' : SVC(),
+  # 'knn': KNeighborsClassifier(),
+  # 'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
 }
 
-def modelFileName(algorithm): return 'collections/'+algorithm+'.pkl'
+def modelFileName(algorithm): return OUT_DIR+''+algorithm+'.pkl'
 
 def modelling(x, y, graphDetail, algorithm='randomForest'):
   ctx= 'Training Model With: '+algorithm.upper()

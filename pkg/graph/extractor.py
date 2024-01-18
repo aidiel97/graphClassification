@@ -68,16 +68,16 @@ def extractGraph(df, datasetDetail):
     dst_df['SequenceId'] = dst_df['Dst-Id']
     dst_df = dst_df[['Address'] + [col for col in dst_df.columns if col != 'Address']]
     
-    checkDir('collections/extract/')
+    checkDir(OUT_DIR+'extract/')
     # FOR EXPORT, check the variable is string or dictionary
     if isinstance(datasetDetail, str):
         datasetName = datasetDetail.replace("collections/split/", "")
         datasetName = datasetName.replace(".csv", "")
-        src_df.to_csv('collections/extract/'+datasetName+'-out.csv', index=False)
-        dst_df.to_csv('collections/extract/'+datasetName+'-in.csv', index=False)
+        src_df.to_csv(OUT_DIR+'extract/'+datasetName+'-out.csv', index=False)
+        dst_df.to_csv(OUT_DIR+'extract/'+datasetName+'-in.csv', index=False)
     else:
-        src_df.to_csv('collections/extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-out.csv', index=False)
-        dst_df.to_csv('collections/extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-in.csv', index=False)
+        src_df.to_csv(OUT_DIR+'extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-out.csv', index=False)
+        dst_df.to_csv(OUT_DIR+'extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-in.csv', index=False)
     
     # Print a completion message
     print("Processing complete.")

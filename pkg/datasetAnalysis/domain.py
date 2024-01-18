@@ -36,8 +36,8 @@ def main(feature):
   botnetDf.boxplot(showfliers=False)
   plt.xticks(rotation=90)
   plt.subplots_adjust(bottom=0.25)
-  plt.savefig('collections/'+feature+'-botnet-boxplot.png')
-  botnetDf.describe().transpose().to_csv('collections/'+feature+'-botnet-describe.csv')
+  plt.savefig(OUT_DIR+''+feature+'-botnet-boxplot.png')
+  botnetDf.describe().transpose().to_csv(OUT_DIR+''+feature+'-botnet-describe.csv')
 
   plt.figure()
   backgroundEquate = equateListLength(backgroundDiff)
@@ -45,8 +45,8 @@ def main(feature):
   backgroundDf.boxplot(showfliers=False)
   plt.xticks(rotation=90)
   plt.subplots_adjust(bottom=0.25)
-  plt.savefig('collections/'+feature+'-background-boxplot.png')
-  backgroundDf.describe().transpose().to_csv('collections/'+feature+'-background-describe.csv')
+  plt.savefig(OUT_DIR+''+feature+'-background-boxplot.png')
+  backgroundDf.describe().transpose().to_csv(OUT_DIR+''+feature+'-background-describe.csv')
 
   plt.figure()
   normalEquate = equateListLength(normalDiff)
@@ -54,15 +54,15 @@ def main(feature):
   normalDf.boxplot(showfliers=False)
   plt.xticks(rotation=90)
   plt.subplots_adjust(bottom=0.25)
-  plt.savefig('collections/'+feature+'-normal-boxplot.png')
-  normalDf.describe().transpose().to_csv('collections/'+feature+'-normal-describe.csv')
+  plt.savefig(OUT_DIR+''+feature+'-normal-boxplot.png')
+  normalDf.describe().transpose().to_csv(OUT_DIR+''+feature+'-normal-describe.csv')
 
 def flow(datasetName, stringDatasetName, shortName, selected, feature):
   ctx=feature+' Analysis with statistical approach '+shortName+'-'+selected
   start = watcherStart(ctx)
   sequenceOf = 'SrcAddr'
   
-  checkDir('collections/split/')
+  checkDir(OUT_DIR+'split/')
   df = loader.binetflow(datasetName, selected, stringDatasetName)
   df['ActivityLabel'] = df['Label'].apply(preProcessing.labelSimplier)
   df['Unix'] = df['StartTime'].apply(preProcessing.timeToUnix).fillna(0)
@@ -77,8 +77,8 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   test = preProcessing.calculate_diff(test)
 
   # export the data
-  train.to_csv('collections/split/'+shortName+'-'+selected+'-train.csv', index=False, header=True)
-  test.to_csv('collections/split/'+shortName+'-'+selected+'-test.csv', index=False, header=True)
+  train.to_csv(OUT_DIR+'split/'+shortName+'-'+selected+'-train.csv', index=False, header=True)
+  test.to_csv(OUT_DIR+'split/'+shortName+'-'+selected+'-test.csv', index=False, header=True)
 
   botnet = train[train['ActivityLabel'] == 'botnet']
   normal = train[train['ActivityLabel'] == 'normal']

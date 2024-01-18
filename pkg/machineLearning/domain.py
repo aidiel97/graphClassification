@@ -56,8 +56,8 @@ def predict(ctx, df, graphDetail, algorithm='randomForest'):
   ml.evaluation(ctx, y, predictionResult, algorithm)
   
   df['Prediction'] = predictionResult
-  checkDir('collections/prediction/'+graphDetail+'/')
-  df.to_csv('collections/prediction/'+graphDetail+'/'+ctx+'.csv', index=False)
+  checkDir(OUT_DIR+'prediction/'+graphDetail+'/')
+  df.to_csv(OUT_DIR+'prediction/'+graphDetail+'/'+ctx+'.csv', index=False)
 
   ctx = ctx+' '+graphDetail+'-degree'
   watcherEnd(ctx, start, True)
@@ -129,7 +129,7 @@ def trainingAllAlgorithm():
   arrayDfOut = []
   ##### loop all dataset (csv)
   # Specify the directory path
-  directory_path = 'collections/extract/'
+  directory_path = OUT_DIR+'extract/'
 
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
@@ -160,7 +160,7 @@ def executeAllDataGraph():
   start = watcherStart(ctx)
   ##### loop all dataset (csv)
   # Specify the directory path
-  directory_path = 'collections/extract/'
+  directory_path = OUT_DIR+'extract/'
 
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
