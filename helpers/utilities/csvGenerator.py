@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime
 from helpers.utilities.watcher import *
+from helpers.common.globalConfig import OUT_DIR
 
 def similarityResult(botnetUniqueSelection, normalUniqueSelection, botnetRecord, normalRecord, samplingRule, decompositor, similarityResult):
   ctx= 'Export Similarity Result'

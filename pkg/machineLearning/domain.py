@@ -5,6 +5,7 @@ import pkg.machineLearning.machineLearning as ml
 from helpers.utilities.watcher import *
 from helpers.utilities.dirManagement import checkDir
 from helpers.common.main import *
+from helpers.common.globalConfig import OUT_DIR
 
 import pandas as pd
 import os

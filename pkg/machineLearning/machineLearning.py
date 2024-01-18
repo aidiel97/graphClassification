@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 from sklearn.linear_model import *
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
+from helpers.common.globalConfig import OUT_DIR
 
 
 algorithmDict = {
