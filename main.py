@@ -13,7 +13,8 @@ if __name__ == "__main__":
   listMenu = [
     ('Split dataset and get optimal time gap', analysis.splitAndTimeGap),
     ('Generate graph dataset (from all dataset)', grp.executeAllData),
-    ('Training the graph dataset', ml.trainingAllAlgorithm),
+    ('Training the in-degree graph dataset', ml.trainingInGraph),
+    ('Training the out-degree graph dataset', ml.trainingOutGraph),
     ('Classify network graph', ml.executeAllDataGraph),
   ]
   cli.menu(listMenu)

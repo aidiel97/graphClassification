@@ -89,9 +89,8 @@ def modelling(df, graphDetail, algorithm='randomForest'):
 
   watcherEnd(ctx, start, True)
 
-def trainingAllAlgorithm():
+def trainingInGraph():
   arrayDfIn = []
-  arrayDfOut = []
   ##### loop all dataset (csv)
   # Specify the directory path
   directory_path = OUT_DIR+'extract/train/'
@@ -104,20 +103,40 @@ def trainingAllAlgorithm():
   for file_name in file_names:
     if '-in.csv' in  file_name:
       arrayDfIn.append(pd.read_csv(directory_path+file_name))
-    elif '-out.csv' in file_name:
-      arrayDfOut.append(pd.read_csv(directory_path+file_name))
+      print("Load " + file_name + "....")
 
   dfIn = pd.concat(arrayDfIn, axis=0)
   dfIn['ActivityLabel'] = dfIn['Label'].apply(lambda x: 1 if x == 'botnet' else 0)
   dfIn.reset_index(drop=True, inplace=True)
   
+  for algo in list(ml.algorithmDict.keys()):
+    modelling(dfIn, 'in', algo)
+
+
+def trainingOutGraph():
+  arrayDfOut = []
+  ##### loop all dataset (csv)
+  # Specify the directory path
+  directory_path = OUT_DIR+'extract/train/'
+
+  # Get all file names in the directory
+  file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
+
+  # Print the file names
+  print("File names in the directory:")
+  for file_name in file_names:
+    if '-out.csv' in file_name:
+      arrayDfOut.append(pd.read_csv(directory_path+file_name))
+      print("Load " + file_name + "....")
+
   dfOut = pd.concat(arrayDfOut, axis=0)
   dfOut['ActivityLabel'] = dfOut['Label'].apply(lambda x: 1 if x == 'botnet' else 0)
   dfOut.reset_index(drop=True, inplace=True)
 
   for algo in list(ml.algorithmDict.keys()):
-    modelling(dfIn, 'in', algo)
     modelling(dfOut, 'out', algo)
+  
+  del dfOut #flush unused dataframe
 
 def executeAllDataGraph():
   ctx='Graph Classification - Execute All Data'
