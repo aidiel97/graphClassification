@@ -7,7 +7,7 @@ from pkg.graph.generator import *
 from helpers.utilities.dirManagement import checkDir
 
 def extractGraph(df, datasetDetail):
-    ctx = 'Graph based analysis - Graph to Tabular'
+    ctx = 'Graph based analysis - Graph to Tabular' 
     start = watcherStart(ctx)
     srcId = ['Src-Id']
     dstId = ['Dst-Id']

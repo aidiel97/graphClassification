@@ -108,11 +108,11 @@ def trainingAllAlgorithm():
       arrayDfOut.append(pd.read_csv(directory_path+file_name))
 
   dfIn = pd.concat(arrayDfIn, axis=0)
-  dfIn['ActivityLabel'] = dfIn['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+  dfIn['ActivityLabel'] = dfIn['Label'].apply(lambda x: 1 if x == 'botnet' else 0)
   dfIn.reset_index(drop=True, inplace=True)
   
   dfOut = pd.concat(arrayDfOut, axis=0)
-  dfOut['ActivityLabel'] = dfOut['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+  dfOut['ActivityLabel'] = dfOut['Label'].apply(lambda x: 1 if x == 'botnet' else 0)
   dfOut.reset_index(drop=True, inplace=True)
 
   for algo in list(ml.algorithmDict.keys()):
@@ -134,7 +134,7 @@ def executeAllDataGraph():
   for algo in list(ml.algorithmDict.keys()):
     for file_name in file_names:
       df = pd.read_csv(directory_path+file_name)
-      df['ActivityLabel'] = df['Label'].str.contains('botnet', case=False, regex=True).astype(int)
+      df['ActivityLabel'] = df['Label'].apply(lambda x: 1 if x == 'botnet' else 0)
       df.reset_index(drop=True, inplace=True)
       
       file_name = file_name.replace("-test","")

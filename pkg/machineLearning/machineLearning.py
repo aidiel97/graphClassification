@@ -2,6 +2,7 @@ from helpers.utilities.watcher import *
 import helpers.utilities.csvGenerator as csv
 
 import pickle
+import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -47,8 +48,7 @@ def classification(x, graphDetail, algorithm='randomForest'):
   return predictionResult
 
 def evaluation(ctx, y, predictionResult, algorithm='randomForest'):
-  print(confusion_matrix(y, predictionResult))
-  tn, fp, fn, tp = confusion_matrix(y, predictionResult).ravel()
+  tn, fp, fn, tp = confusion_matrix(y, predictionResult, labels=[1, 0]).ravel()
 
   print('\nAlgorithm\t\t\t: '+algorithm)
   print('\nTotal input data\t\t\t: '+str(y.shape[0]))

@@ -14,6 +14,6 @@ if __name__ == "__main__":
     ('Split dataset and get optimal time gap', analysis.splitAndTimeGap),
     ('Generate graph dataset (from all dataset)', grp.executeAllData),
     ('Training the graph dataset', ml.trainingAllAlgorithm),
-    ('Classified network graph', ml.executeAllDataGraph),
+    ('Classify network graph', ml.executeAllDataGraph),
   ]
   cli.menu(listMenu)
