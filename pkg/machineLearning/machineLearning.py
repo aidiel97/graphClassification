@@ -4,7 +4,7 @@ import helpers.utilities.csvGenerator as csv
 import pickle
 import numpy as np
 from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, ExtraTreesClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
@@ -20,8 +20,10 @@ algorithmDict = {
   'naiveBayes': GaussianNB(),
   'logisticRegression' : LogisticRegression(),
   'xGBoost': GradientBoostingClassifier(),
-  # 'svc' : SVC(),
+  'adaboost': AdaBoostClassifier(),
+  'extraTree': ExtraTreesClassifier(),
   # 'knn': KNeighborsClassifier(),
+  # 'svc' : SVC(),
   # 'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
 }
 
