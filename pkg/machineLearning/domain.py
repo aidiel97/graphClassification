@@ -163,12 +163,12 @@ def executeAllDataGraph():
       elif 'out' in file_name:
         outdf = predict(predictCtx, df, 'out', algo)
     
-      combined_df = pd.concat([indf, outdf], ignore_index=True)
-      result_df = combined_df.groupby(['Address', 'Prediction']).size().unstack(fill_value=0)
-      result_df.columns = [f"predict-{col}" for col in result_df.columns]
-      result_df = result_df.reset_index()
-      checkDir(OUT_DIR+'prediction/')
-      df.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
+        combined_df = pd.concat([indf, outdf], ignore_index=True)
+        result_df = combined_df.groupby(['Address', 'Prediction']).size().unstack(fill_value=0)
+        result_df.columns = [f"predict-{col}" for col in result_df.columns]
+        result_df = result_df.reset_index()
+        checkDir(OUT_DIR+'prediction/')
+        df.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
 
 
 
