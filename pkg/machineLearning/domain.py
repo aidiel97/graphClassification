@@ -168,7 +168,7 @@ def executeAllDataGraph():
         result_df.columns = [f"predict-{col}" for col in result_df.columns]
         result_df = result_df.reset_index()
         checkDir(OUT_DIR+'prediction/')
-        df.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
+        result_df.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
 
 
 
