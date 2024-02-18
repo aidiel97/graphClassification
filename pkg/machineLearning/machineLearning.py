@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, ExtraTreesClassifier
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import *
@@ -15,14 +15,14 @@ from helpers.common.globalConfig import OUT_DIR
 
 
 algorithmDict = {
-  'decisionTree': DecisionTreeClassifier(),
-  'randomForest': RandomForestClassifier(),
-  'naiveBayes': GaussianNB(),
+  'decisionTree': DecisionTreeClassifier(criterion='entropy', max_depth=13),
+  'randomForest': RandomForestClassifier(learning_rate=1.0, n_estimators=1000, criterion='entropy', max_features='log2'),
+  'naiveBayes': MultinomialNB(alpha=0.5, fit_prior=False),
+  'adaboost': AdaBoostClassifier(n_estimators=600, learning_rate=1.0),
+  'extraTree': ExtraTreesClassifier(n_estimators=400, criterion='entropy'),
   'logisticRegression' : LogisticRegression(),
   'xGBoost': GradientBoostingClassifier(),
-  'adaboost': AdaBoostClassifier(),
-  'extraTree': ExtraTreesClassifier(),
-  # 'knn': KNeighborsClassifier(),
+  'knn': KNeighborsClassifier(n_neighbors=13, metric='manhattan', weights='uniform'),
   # 'svc' : SVC(),
   # 'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
 }
