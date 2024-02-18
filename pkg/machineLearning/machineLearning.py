@@ -16,7 +16,7 @@ from helpers.common.globalConfig import OUT_DIR
 
 algorithmDict = {
   'decisionTree': DecisionTreeClassifier(criterion='entropy', max_depth=13),
-  'randomForest': RandomForestClassifier(learning_rate=1.0, n_estimators=1000, criterion='entropy', max_features='log2'),
+  'randomForest': RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features='log2'),
   'naiveBayes': MultinomialNB(alpha=0.5, fit_prior=False),
   'adaboost': AdaBoostClassifier(n_estimators=600, learning_rate=1.0),
   'extraTree': ExtraTreesClassifier(n_estimators=400, criterion='entropy'),
