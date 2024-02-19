@@ -160,15 +160,15 @@ def executeAllDataGraph():
       predictCtx = generalCtx + algo + '-' + file_name.replace(".csv","")
       if 'in' in  file_name:
         indf = predict(predictCtx, df, 'in', algo)
-        result = indf.groupby('Address')['prediction'].agg(['sum', 'count']).reset_index()
-        result = result.rename(columns={'Address': 'address'})
+        result = indf.groupby('Address')['Prediction'].agg(['sum', 'count']).reset_index()
+        result = result.rename(columns={'Address': 'address','Prediction': 'prediction'})
         result['Ratio'] = result['sum'] / result['count']
         result['Label'] = result['Address'].apply(lambda x: 1 if x in botIP else 0)
         result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
       elif 'out' in file_name:
         outdf = predict(predictCtx, df, 'out', algo)
-        result = outdf.groupby('Address')['prediction'].agg(['sum', 'count']).reset_index()
-        result = result.rename(columns={'Address': 'address'})
+        result = outdf.groupby('Address')['Prediction'].agg(['sum', 'count']).reset_index()
+        result = result.rename(columns={'Address': 'address','Prediction': 'prediction'})
         result['Ratio'] = result['sum'] / result['count']
         result['Label'] = result['Address'].apply(lambda x: 1 if x in botIP else 0)
         result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
