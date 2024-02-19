@@ -67,7 +67,12 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   df = loader.binetflow(datasetName, selected, stringDatasetName)
   df['ActivityLabel'] = df['Label'].apply(preProcessing.labelSimplier)
   df['Unix'] = df['StartTime'].apply(preProcessing.timeToUnix).fillna(0)
-  train, test = loader.splitDataFrameWithIndex(df)
+
+  if stringDatasetName == 'ctu' and selected == 'scenario7':
+    train=df
+    test=df
+  else:
+    train, test = loader.splitDataFrameWithIndex(df)
 
   # generate diff feature on test data
   train = train.sort_values(by=[sequenceOf, 'Unix'])
@@ -80,7 +85,9 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   # export the data
   checkDir(OUT_DIR+'split/train/')
   checkDir(OUT_DIR+'split/test/')
-  train.to_csv(OUT_DIR+'split/train/'+shortName+'-'+selected+'.csv', index=False, header=True)
+  if stringDatasetName != 'ctu' and selected != 'scenario7':
+    train.to_csv(OUT_DIR+'split/train/'+shortName+'-'+selected+'.csv', index=False, header=True)
+  
   test.to_csv(OUT_DIR+'split/test/'+shortName+'-'+selected+'.csv', index=False, header=True)
 
   botnet = train[train['ActivityLabel'] == 'botnet']
