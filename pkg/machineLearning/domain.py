@@ -148,6 +148,7 @@ def executeAllDataGraph():
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
 
+  checkDir(OUT_DIR+'prediction/')
   # Print the file names
   generalCtx = 'graph-'
   for algo in list(ml.algorithmDict.keys()):
