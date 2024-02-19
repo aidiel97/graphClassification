@@ -199,8 +199,9 @@ def combinePredictionResult():
     coreName = '-'.join(file_name_component[:3])
 
     if tempFileName == coreName:
-      merged_df = pd.merge(thisDf, lastDf, on='Address', suffixes=(file_name_component[-1], tempFileName.split('-')[-1]))
-      merged_df.to_csv(directory_path+coreName)
+      print('Combining Prediction Result: '+coreName)
+      merged_df = pd.merge(thisDf, lastDf, on='Address', suffixes=('-'+file_name_component[-1], '-in'))
+      merged_df.to_csv(directory_path+coreName+".csv")
 
     lastDf = thisDf
     tempFileName= coreName
