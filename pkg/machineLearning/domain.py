@@ -160,24 +160,12 @@ def executeAllDataGraph():
       predictCtx = generalCtx + algo + '-' + file_name.replace(".csv","")
       if 'in' in  file_name:
         indf = predict(predictCtx, df, 'in', algo)
+        result = indf.groupby('SrcAddr')['Prediction'].agg(['sum', 'count']).reset_index()
+        result.to_csv(OUT_DIR+'prediction/'+predictCtx+'-in.csv', index=False)
       elif 'out' in file_name:
         outdf = predict(predictCtx, df, 'out', algo)
-    
-        # Concatenate the two DataFrames
-        combined_df = pd.concat([indf, outdf], keys=['In', 'Out'])
-
-        # Pivot the combined DataFrame
-        pivot_df = combined_df.pivot_table(index='Address', columns='Prediction', aggfunc='size', fill_value=0)
-
-        # Rename columns
-        pivot_df.columns = [f'Predict_{col}_{"In" if key == "In" else "Out"}' for key, col in pivot_df.columns]
-
-        # Reset index
-        pivot_df.reset_index(inplace=True)
-        checkDir(OUT_DIR+'prediction/')
-        pivot_df.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
-
-
+        result = outdf.groupby('SrcAddr')['Prediction'].agg(['sum', 'count']).reset_index()
+        result.to_csv(OUT_DIR+'prediction/'+predictCtx+'-out.csv', index=False)
 
   ##### loop all dataset
 
