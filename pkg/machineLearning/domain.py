@@ -200,7 +200,7 @@ def combinePredictionResult():
 
     if tempFileName == coreName:
       print('Combining Prediction Result: '+coreName)
-      merged_df = pd.merge(thisDf, lastDf, on='Address', suffixes=('-'+file_name_component[-1], '-in'))
+      merged_df = pd.merge(thisDf, lastDf, on='address', suffixes=('-'+file_name_component[-1], '-in'))
       merged_df.to_csv(directory_path+coreName+".csv")
 
     lastDf = thisDf
