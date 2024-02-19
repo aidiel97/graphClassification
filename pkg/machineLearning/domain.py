@@ -163,14 +163,14 @@ def executeAllDataGraph():
         result = indf.groupby('Address')['Prediction'].agg(['sum', 'count']).reset_index()
         result = result.rename(columns={'Address': 'address','Prediction': 'prediction'})
         result['Ratio'] = result['sum'] / result['count']
-        result['Label'] = result['Address'].apply(lambda x: 1 if x in botIP else 0)
+        result['Label'] = result['address'].apply(lambda x: 1 if x in botIP else 0)
         result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
       elif 'out' in file_name:
         outdf = predict(predictCtx, df, 'out', algo)
         result = outdf.groupby('Address')['Prediction'].agg(['sum', 'count']).reset_index()
         result = result.rename(columns={'Address': 'address','Prediction': 'prediction'})
         result['Ratio'] = result['sum'] / result['count']
-        result['Label'] = result['Address'].apply(lambda x: 1 if x in botIP else 0)
+        result['Label'] = result['address'].apply(lambda x: 1 if x in botIP else 0)
         result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
 
   ##### loop all dataset
