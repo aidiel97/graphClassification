@@ -213,6 +213,7 @@ def combinePredictionResult():
       merged_df['Predict'] = (merged_df['Ratio'] > threshold).astype(int)      
       merged_df['Label'] = merged_df['address'].apply(lambda x: 1 if x in botIP else 0)
 
+      ml.evaluation(ctx, merged_df['Label'], merged_df['Predict'], 'COMBINING-GRAPH-PREDICTION')
       merged_df.reset_index(drop=True, inplace=True)
       merged_df.to_csv(directory_path+coreName+".csv")
 
