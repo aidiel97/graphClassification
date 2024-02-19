@@ -165,6 +165,7 @@ def executeAllDataGraph():
         result = result.rename(columns={'Address': 'address','Prediction': 'prediction'})
         result['Ratio'] = result['sum'] / result['count']
         result['Label'] = result['address'].apply(lambda x: 1 if x in botIP else 0)
+        result.reset_index(drop=True, inplace=True)
         result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
       elif 'out' in file_name:
         outdf = predict(predictCtx, df, 'out', algo)
@@ -172,6 +173,7 @@ def executeAllDataGraph():
         result = result.rename(columns={'Address': 'address','Prediction': 'prediction'})
         result['Ratio'] = result['sum'] / result['count']
         result['Label'] = result['address'].apply(lambda x: 1 if x in botIP else 0)
+        result.reset_index(drop=True, inplace=True)
         result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
 
   ##### loop all dataset
@@ -189,6 +191,8 @@ def combinePredictionResult():
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
 
+  weigth = 1 #ADD WEIGHT HERE
+  threshold = 0.5 #ADD WEIGHT HERE
   tempFileName = ''
   for file_name in file_names:
     thisDf = pd.read_csv(directory_path+file_name)
@@ -201,6 +205,15 @@ def combinePredictionResult():
     if tempFileName == coreName:
       print('Combining Prediction Result: '+coreName)
       merged_df = pd.merge(thisDf, lastDf, on='address', suffixes=('-out', '-in'))
+
+      merged_df['sum'] = merged_df['sum-out'] + merged_df['sum-in']*weigth
+      merged_df['count'] = merged_df['count-out'] + merged_df['count-in']*weigth
+      merged_df['Ratio'] = merged_df['sum'] / merged_df['count']
+
+      merged_df['Predict'] = (merged_df['Ratio'] > threshold).astype(int)      
+      merged_df['Label'] = merged_df['address'].apply(lambda x: 1 if x in botIP else 0)
+
+      merged_df.reset_index(drop=True, inplace=True)
       merged_df.to_csv(directory_path+coreName+".csv")
 
     lastDf = thisDf
