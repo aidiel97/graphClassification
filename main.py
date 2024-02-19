@@ -16,5 +16,6 @@ if __name__ == "__main__":
     ('Training the in-degree graph dataset', ml.trainingInGraph),
     ('Training the out-degree graph dataset', ml.trainingOutGraph),
     ('Classify network graph', ml.executeAllDataGraph),
+    ('Combine two prediction result', ml.combinePredictionResult),
   ]
   cli.menu(listMenu)

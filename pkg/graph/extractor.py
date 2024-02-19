@@ -12,7 +12,7 @@ def extractGraph(df, datasetDetail):
     srcId = ['Src-Id']
     dstId = ['Dst-Id']
 
-    listBotnetAddress = ['147.32.84.165', '147.32.84.191', '147.32.84.192', '147.32.84.193', '147.32.84.204', '147.32.84.205', '147.32.84.206', '147.32.84.207', '147.32.84.208', '147.32.84.209']
+    listBotnetAddress = botIP
     
     #out degree
     node_src_df = df.groupby(srcId).agg(OutDegree = ("Dst-Id", "nunique"),IntensityOutDegree = ("Dst-Id", "count"))

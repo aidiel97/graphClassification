@@ -160,13 +160,46 @@ def executeAllDataGraph():
       predictCtx = generalCtx + algo + '-' + file_name.replace(".csv","")
       if 'in' in  file_name:
         indf = predict(predictCtx, df, 'in', algo)
-        result = indf.groupby('SrcAddr')['Prediction'].agg(['sum', 'count']).reset_index()
-        result.to_csv(OUT_DIR+'prediction/'+predictCtx+'-in.csv', index=False)
+        result = indf.groupby('Address')['Prediction'].agg(['Sum', 'Count']).reset_index()
+        result['Ratio'] = result['Sum'] / result['Count']
+        result['Label'] = result['Address'].apply(lambda x: 1 if x in botIP else 0)
+        result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
       elif 'out' in file_name:
         outdf = predict(predictCtx, df, 'out', algo)
-        result = outdf.groupby('SrcAddr')['Prediction'].agg(['sum', 'count']).reset_index()
-        result.to_csv(OUT_DIR+'prediction/'+predictCtx+'-out.csv', index=False)
+        result = outdf.groupby('Address')['Prediction'].agg(['Sum', 'Count']).reset_index()
+        result['Ratio'] = result['Sum'] / result['Count']
+        result['Label'] = result['Address'].apply(lambda x: 1 if x in botIP else 0)
+        result.to_csv(OUT_DIR+'prediction/'+predictCtx+'.csv', index=False)
 
   ##### loop all dataset
+
+  watcherEnd(ctx, start)
+
+
+def combinePredictionResult():
+  ctx='Graph Classification - Combine Prediction Result'
+  start = watcherStart(ctx)
+  ##### loop all dataset (csv)
+  # Specify the directory path
+  directory_path = OUT_DIR+'prediction/'
+
+  # Get all file names in the directory
+  file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
+
+  tempFileName = ''
+  for file_name in file_names:
+    thisDf = pd.read_csv(directory_path+file_name)
+
+    file_name = file_name.replace(".csv","")
+    file_name = file_name.replace("graph-","")
+    file_name_component = file_name.split('-')
+    coreName = '-'.join(file_name_component[:3])
+
+    if tempFileName == coreName:
+      merged_df = pd.merge(thisDf, lastDf, on='Address', suffixes=(file_name_component[-1], tempFileName.split('-')[-1]))
+      merged_df.to_csv(directory_path+coreName)
+
+    lastDf = thisDf
+    tempFileName= coreName
 
   watcherEnd(ctx, start)

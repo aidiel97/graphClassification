@@ -41,7 +41,6 @@ def graphClassificationModelling():
         arrayDf.append(loader.binetflow(datasetName, selected, stringDatasetName))
     df = pd.concat(arrayDf, axis=0)
     df.reset_index(drop=True, inplace=True)
-    botIP = ['147.32.84.165', '147.32.84.191', '147.32.84.192', '147.32.84.193', '147.32.84.204', '147.32.84.205', '147.32.84.206', '147.32.84.207', '147.32.84.208', '147.32.84.209']
 
     df['CVReceivedBytes'] = df['CVReceivedBytes'].fillna(0)
     df['CVSentBytes'] = df['CVSentBytes'].fillna(0)
