@@ -53,7 +53,7 @@ def classification(x, graphDetail, algorithm='randomForest'):
   return predictionResult
 
 def evaluation(ctx, y, predictionResult, algorithm='randomForest'):
-  tn, fp, fn, tp = confusion_matrix(y, predictionResult, labels=[1, 0]).ravel()
+  tn, fp, fn, tp = confusion_matrix(y, predictionResult, labels=[0,1]).ravel()
 
   print('\nAlgorithm\t\t\t: '+algorithm)
   print('\nTotal input data\t\t\t: '+str(y.shape[0]))
