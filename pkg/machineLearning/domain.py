@@ -204,7 +204,7 @@ def combinePredictionResult():
 
     if tempFileName == coreName:
       print('Combining Prediction Result: '+coreName)
-      merged_df = pd.merge(thisDf, lastDf, on='address', suffixes=('-out', '-in'))
+      merged_df = pd.merge(thisDf, lastDf, on='address', how='outer', suffixes=('-out', '-in'))
 
       merged_df['sum'] = merged_df['sum-out'] + merged_df['sum-in']*weigth
       merged_df['count'] = merged_df['count-out'] + merged_df['count-in']*weigth
