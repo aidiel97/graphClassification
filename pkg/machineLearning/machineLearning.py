@@ -33,8 +33,8 @@ algorithmDict = {
 def modelFileName(algorithm): return OUT_DIR+''+algorithm+'.pkl'
 
 def modelling(x, y, graphDetail, algorithm='randomForest'):
-  ctx= 'Training Model With: '+algorithm.upper()
   start= watcherStart(ctx)
+  ctx= datetime.fromtimestamp(start)+' | Training Model With: '+algorithm.upper()
 
   model = algorithmDict[algorithm]
   model.fit(x, y)
