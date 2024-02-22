@@ -1,6 +1,7 @@
 from helpers.utilities.watcher import *
 import helpers.utilities.csvGenerator as csv
 
+import time
 import pickle
 import numpy as np
 from sklearn.neural_network import MLPClassifier
@@ -33,8 +34,8 @@ algorithmDict = {
 def modelFileName(algorithm): return OUT_DIR+''+algorithm+'.pkl'
 
 def modelling(x, y, graphDetail, algorithm='randomForest'):
+  ctx= time.time()+' | Training Model With: '+algorithm.upper()
   start= watcherStart(ctx)
-  ctx= datetime.fromtimestamp(start)+' | Training Model With: '+algorithm.upper()
 
   model = algorithmDict[algorithm]
   model.fit(x, y)
