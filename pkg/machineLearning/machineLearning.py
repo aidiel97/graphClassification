@@ -34,7 +34,7 @@ algorithmDict = {
 def modelFileName(algorithm): return OUT_DIR+''+algorithm+'.pkl'
 
 def modelling(x, y, graphDetail, algorithm='randomForest'):
-  ctx= time.time()+' | Training Model With: '+algorithm.upper()
+  ctx= str(time.time())+' | Training Model With: '+algorithm.upper()
   start= watcherStart(ctx)
 
   model = algorithmDict[algorithm]
