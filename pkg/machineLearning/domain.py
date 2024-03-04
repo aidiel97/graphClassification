@@ -191,33 +191,36 @@ def combinePredictionResult():
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
 
-  weigth = 1 #ADD WEIGHT HERE
-  threshold = 0.5 #ADD WEIGHT HERE
+  # weigth = 0 #ADD WEIGHT HERE
+  # threshold = 0 #ADD THRESHOLD HERE
   tempFileName = ''
-  for file_name in file_names:
-    thisDf = pd.read_csv(directory_path+file_name)
 
-    file_name = file_name.replace(".csv","")
-    file_name = file_name.replace("graph-","")
-    file_name_component = file_name.split('-')
-    coreName = '-'.join(file_name_component[:3])
+  for weigth in range(1,4):
+    for threshold in range(11):
+      for file_name in file_names:
+        thisDf = pd.read_csv(directory_path+file_name)
 
-    if tempFileName == coreName:
-      print('Combining Prediction Result: '+coreName)
-      merged_df = pd.merge(thisDf, lastDf, on='address', how='outer', suffixes=('-out', '-in'))
+        file_name = file_name.replace(".csv","")
+        file_name = file_name.replace("graph-","")
+        file_name_component = file_name.split('-')
+        coreName = '-'.join(file_name_component[:3])
 
-      merged_df['sum'] = merged_df['sum-out'] + merged_df['sum-in']*weigth
-      merged_df['count'] = merged_df['count-out'] + merged_df['count-in']*weigth
-      merged_df['Ratio'] = merged_df['sum'] / merged_df['count']
+        if tempFileName == coreName:
+          print('Combining Prediction Result: '+coreName)
+          merged_df = pd.merge(thisDf, lastDf, on='address', how='outer', suffixes=('-out', '-in'))
 
-      merged_df['Predict'] = (merged_df['Ratio'] > threshold).astype(int)      
-      merged_df['Label'] = merged_df['address'].apply(lambda x: 1 if x in botIP else 0)
+          merged_df['sum'] = merged_df['sum-out'] + merged_df['sum-in']*weigth
+          merged_df['count'] = merged_df['count-out'] + merged_df['count-in']*weigth
+          merged_df['Ratio'] = merged_df['sum'] / merged_df['count']
 
-      ml.evaluation(ctx, merged_df['Label'], merged_df['Predict'], 'COMBINED-PREDICTION-'+coreName)
-      merged_df.reset_index(drop=True, inplace=True)
-      merged_df.to_csv(directory_path+coreName+".csv")
+          merged_df['Predict'] = (merged_df['Ratio'] > threshold/10).astype(int)      
+          merged_df['Label'] = merged_df['address'].apply(lambda x: 1 if x in botIP else 0)
 
-    lastDf = thisDf
-    tempFileName= coreName
+          ml.evaluation(ctx, merged_df['Label'], merged_df['Predict'], 'COMBINED-PREDICTION-'+coreName+'th'+str(threshold)+'w'+str(weigth))
+          merged_df.reset_index(drop=True, inplace=True)
+          merged_df.to_csv(directory_path+coreName+".csv")
+
+        lastDf = thisDf
+        tempFileName= coreName
 
   watcherEnd(ctx, start)
