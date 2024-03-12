@@ -169,3 +169,31 @@ protoDict = {'arp': 5, 'unas': 13, 'udp': 1, 'rtcp': 7, 'pim': 3, 'udt': 11, 'es
 
 #listBotIPinDataset
 botIP = ['147.32.84.165', '147.32.84.191', '147.32.84.192', '147.32.84.193', '147.32.84.204', '147.32.84.205', '147.32.84.206', '147.32.84.207', '147.32.84.208', '147.32.84.209']
+
+botCount13Scenario = {
+  'scenario1' : [botIP[0]],
+  'scenario2' : [botIP[0]],
+  'scenario3' : [botIP[0]],
+  'scenario4' : [botIP[0]],
+  'scenario5' : [botIP[0]],
+  'scenario6' : [botIP[0]],
+  'scenario7' : [botIP[0]],
+  'scenario8' : [botIP[0]],
+  'scenario9' : botIP,
+  'scenario10' : botIP,
+  'scenario11' : botIP[:3],
+  'scenario12' : botIP[:3],
+  'scenario13' : [botIP[0]],
+}
+
+botCount3Scenario = {
+  'scenario1' : botIP,
+  'scenario2' : botIP,
+  'scenario3' : botIP,
+}
+
+detailBotCount = {
+  'ctu': botCount13Scenario,
+  'ncc': botCount13Scenario,
+  'ncc2': botCount3Scenario
+}

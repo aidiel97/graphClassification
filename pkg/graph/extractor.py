@@ -11,8 +11,25 @@ def extractGraph(df, datasetDetail):
     start = watcherStart(ctx)
     srcId = ['Src-Id']
     dstId = ['Dst-Id']
+    
+    if isinstance(datasetDetail, str):
+        datasetName = datasetDetail.replace(OUT_DIR+"split/", "")
+        datasetName = datasetName.replace(".csv", "")
+        detailData = "test/"
+        if "train/" in datasetName:
+            datasetName = datasetName.replace("train/","")
+            detailData = "train/"
+        else:
+            datasetName = datasetName.replace("test/","")
 
-    listBotnetAddress = botIP
+        componentDatasetName = datasetName.split('-')
+        stringDatasetName = componentDatasetName[0]
+        stringSubDatasetName = componentDatasetName[1]
+    else:
+        stringDatasetName = datasetDetail['stringDatasetName']
+        stringSubDatasetName = datasetDetail['selected']
+    
+    listBotnetAddress = detailBotCount[stringDatasetName][stringSubDatasetName]
     
     #out degree
     node_src_df = df.groupby(srcId).agg(OutDegree = ("Dst-Id", "nunique"),IntensityOutDegree = ("Dst-Id", "count"))
@@ -69,24 +86,9 @@ def extractGraph(df, datasetDetail):
     dst_df = dst_df[['Address'] + [col for col in dst_df.columns if col != 'Address']]
     
     checkDir(OUT_DIR+'extract/')
-    # FOR EXPORT, check the variable is string or dictionary
-    if isinstance(datasetDetail, str):
-        datasetName = datasetDetail.replace(OUT_DIR+"split/", "")
-        datasetName = datasetName.replace(".csv", "")
-        detailData = "test/"
-        if "train/" in datasetName:
-            datasetName = datasetName.replace("train/","")
-            detailData = "train/"
-        else:
-            datasetName = datasetName.replace("test/","")
-
-        checkDir(OUT_DIR+'extract/'+detailData)
-        src_df.to_csv(OUT_DIR+'extract/'+detailData+datasetName+'-out.csv', index=False)
-        dst_df.to_csv(OUT_DIR+'extract/'+detailData+datasetName+'-in.csv', index=False)
-    else:
-        src_df.to_csv(OUT_DIR+'extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-out.csv', index=False)
-        dst_df.to_csv(OUT_DIR+'extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-in.csv', index=False)
-    
+    checkDir(OUT_DIR+'extract/'+detailData)
+    src_df.to_csv(OUT_DIR+'extract/'+detailData+stringDatasetName+'-'+stringSubDatasetName+'-out.csv', index=False)
+    dst_df.to_csv(OUT_DIR+'extract/'+detailData+stringDatasetName+'-'+stringSubDatasetName+'-in.csv', index=False)
     # Print a completion message
     print("Processing complete.")
     watcherEnd(ctx, start)

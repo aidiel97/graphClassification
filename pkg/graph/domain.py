@@ -91,7 +91,7 @@ def executeAllData():
   # Print the file names
   print("File names in the directory:")
   for file_name in file_names:
-      dftoGraph(train_directory_path+file_name)
+    dftoGraph(train_directory_path+file_name)
     
   ##### loop all dataset (csv)
   # Specify the directory path
@@ -103,6 +103,6 @@ def executeAllData():
   # Print the file names
   print("File names in the directory:")
   for file_name in file_names:
-      dftoGraph(test_directory_path+file_name)
+    dftoGraph(test_directory_path+file_name)
 
   watcherEnd(ctx, start)
