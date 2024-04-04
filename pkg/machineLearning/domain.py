@@ -9,6 +9,7 @@ from helpers.common.globalConfig import OUT_DIR
 
 import pandas as pd
 import os
+import math
 
 def preProcessingModule(df):
   #make new label for background prediciton(1/0)
@@ -187,40 +188,68 @@ def combinePredictionResult():
   ##### loop all dataset (csv)
   # Specify the directory path
   directory_path = OUT_DIR+'prediction/'
+  directory_path_result = OUT_DIR+'result/'
 
   # Get all file names in the directory
   file_names = [f for f in os.listdir(directory_path) if os.path.isfile(os.path.join(directory_path, f))]
-
-  # weigth = 0 #ADD WEIGHT HERE
-  # threshold = 0 #ADD THRESHOLD HERE
   tempFileName = ''
 
-  for weigth in range(1,4):
-    for threshold in range(11):
-      for file_name in file_names:
-        thisDf = pd.read_csv(directory_path+file_name)
+  weightDict = {
+  'decisionTree': (0.12325019258744743,0.5393015423920258),
+  'logisticRegression' : (0,0.00290217729076697),
+  'naiveBayes': (0.9981427481202437,0.035289364485364384),
+  'adaboost': (0.03241604539701408,0.3807663940535213),
+  'extraTree': (0.05764893403874094,0.7866030186701021),
+  'xGBoost': (0.05104214712892774,0.25962799183738416),
+  'randomForest': (0.15037938793782574,0.7459991832477354),
+  'knn': (0.03895095341457135,0.6862854309400126),
+  }
+  
+  win = 1
+  wout = 1
+  algName = ''
+  threshold = 30
+  # for threshold in range(40, 61, 1):
+  for file_name in file_names:
+    thisDf = pd.read_csv(directory_path+file_name)
 
-        file_name = file_name.replace(".csv","")
-        file_name = file_name.replace("graph-","")
-        file_name_component = file_name.split('-')
-        coreName = '-'.join(file_name_component[:3])
+    file_name = file_name.replace(".csv","")
+    file_name = file_name.replace("graph-","")
+    file_name_component = file_name.split('-')
+    stringDatasetName = file_name_component[1]
+    stringSubDatasetName = file_name_component[2]
+    coreName = '-'.join(file_name_component[:3])
+    
+    if (algName != file_name_component[0]):
+      algName = file_name_component[0]
+      win = weightDict[algName][0]*100
+      wout = weightDict[algName][1]*100
+      gcd_value = math.gcd(int(win), int(wout))
+      if gcd_value != 0:
+        win = win // gcd_value
+        wout = wout // gcd_value
+      else:
+        win = 1
+        wout = 1
 
-        if tempFileName == coreName:
-          print('Combining Prediction Result: '+coreName)
-          merged_df = pd.merge(thisDf, lastDf, on='address', how='outer', suffixes=('-out', '-in'))
+    if tempFileName == coreName:
+      print('Combining Prediction Result: '+coreName)
+      merged_df = pd.merge(thisDf, lastDf, on='address', how='outer', suffixes=('-out', '-in'))
 
-          merged_df['sum'] = merged_df['sum-out'] + merged_df['sum-in']*weigth
-          merged_df['count'] = merged_df['count-out'] + merged_df['count-in']*weigth
-          merged_df['Ratio'] = merged_df['sum'] / merged_df['count']
+      merged_df['sum'] = merged_df['sum-out']*wout + merged_df['sum-in']*win
+      merged_df['count'] = merged_df['count-out']*wout + merged_df['count-in']*win
+      merged_df['Ratio'] = merged_df['sum'] / merged_df['count']
 
-          merged_df['Predict'] = (merged_df['Ratio'] > threshold/10).astype(int)      
-          merged_df['Label'] = merged_df['address'].apply(lambda x: 1 if x in botIP else 0)
+      merged_df['Predict'] = (merged_df['Ratio'] > threshold/100).astype(int)
+      listBotnetAddress = detailBotCount[stringDatasetName][stringSubDatasetName]
+      merged_df['Label'] = merged_df['address'].apply(lambda x: 1 if x in listBotnetAddress else 0)
 
-          ml.evaluation(ctx, merged_df['Label'], merged_df['Predict'], 'COMBINED-PREDICTION-'+coreName+'th'+str(threshold)+'w'+str(weigth))
-          merged_df.reset_index(drop=True, inplace=True)
-          merged_df.to_csv(directory_path+coreName+".csv")
+      ml.evaluation(ctx, merged_df['Label'], merged_df['Predict'], 'COMBINED-PREDICTION-'+coreName+'th'+str(threshold)+'wout'+str(wout)+'win'+str(win))
+      merged_df.reset_index(drop=True, inplace=True)
+      checkDir(directory_path_result)
+      merged_df.to_csv(directory_path_result+coreName+".csv")
 
-        lastDf = thisDf
-        tempFileName= coreName
+    lastDf = thisDf
+    tempFileName= coreName
 
   watcherEnd(ctx, start)
