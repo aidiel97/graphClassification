@@ -5,7 +5,7 @@ import pkg.machineLearning.machineLearning as ml
 from helpers.utilities.watcher import *
 from helpers.utilities.dirManagement import checkDir
 from helpers.common.main import *
-from helpers.common.globalConfig import OUT_DIR
+from helpers.common.globalConfig import OUT_DIR, ABLATION
 
 import pandas as pd
 import os
@@ -208,9 +208,9 @@ def combinePredictionResult():
   win = 1
   wout = 1
   algName = ''
-  threshold = 30
-  # for threshold in range(40, 61, 1):
+  threshold = 40
   for file_name in file_names:
+    i_start = watcherStart(ctx)
     thisDf = pd.read_csv(directory_path+file_name)
 
     file_name = file_name.replace(".csv","")
@@ -220,7 +220,7 @@ def combinePredictionResult():
     stringSubDatasetName = file_name_component[2]
     coreName = '-'.join(file_name_component[:3])
     
-    if (algName != file_name_component[0]):
+    if (ABLATION == False and algName != file_name_component[0]):
       algName = file_name_component[0]
       win = weightDict[algName][0]*100
       wout = weightDict[algName][1]*100
@@ -248,6 +248,7 @@ def combinePredictionResult():
       merged_df.reset_index(drop=True, inplace=True)
       checkDir(directory_path_result)
       merged_df.to_csv(directory_path_result+coreName+".csv")
+      watcherEnd(ctx+"-"+stringDatasetName+"-"+stringSubDatasetName, i_start, True)
 
     lastDf = thisDf
     tempFileName= coreName

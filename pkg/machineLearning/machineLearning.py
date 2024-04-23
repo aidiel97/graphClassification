@@ -16,19 +16,19 @@ from helpers.common.globalConfig import OUT_DIR
 
 
 algorithmDict = {
-  # 'decisionTree': DecisionTreeClassifier(criterion='entropy', max_depth=13),
-  # 'logisticRegression' : LogisticRegression(),
-  # 'naiveBayes': MultinomialNB(alpha=0.5, fit_prior=False),
+  'decisionTree': DecisionTreeClassifier(criterion='entropy', max_depth=13),
+  'logisticRegression' : LogisticRegression(),
+  'naiveBayes': MultinomialNB(alpha=0.5, fit_prior=False),
 
-  # 'adaboost': AdaBoostClassifier(n_estimators=600, learning_rate=1.0),
-  # 'extraTree': ExtraTreesClassifier(n_estimators=400, criterion='entropy'),
-  # 'xGBoost': GradientBoostingClassifier(),
-  # 'randomForest': RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features='log2'),
+  'adaboost': AdaBoostClassifier(n_estimators=600, learning_rate=1.0),
+  'extraTree': ExtraTreesClassifier(n_estimators=400, criterion='entropy'),
+  'xGBoost': GradientBoostingClassifier(),
+  'randomForest': RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features='log2'),
   
   'knn': KNeighborsClassifier(n_neighbors=13, metric='manhattan', weights='uniform'),
   
-  # 'svc' : SVC(),
-  # 'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
+  'svc' : SVC(),
+  'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
 }
 
 def modelFileName(algorithm): return OUT_DIR+''+algorithm+'.pkl'

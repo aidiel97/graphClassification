@@ -8,10 +8,6 @@ from datetime import datetime
 from helpers.utilities.watcher import *
 from helpers.common.main import *
 
-def defineSegment(unixTime,value):
-  print(value)
-  # return datetime.fromtimestamp(unixTime).hour
-
 def ipToInteger(ip):
   try:
     packedIP = socket.inet_aton(ip)
@@ -38,8 +34,6 @@ def calculate_diff(df):
   return df
 
 def timeToUnix(startTime):
-  # date_format = datetime.strptime(startTime, '%Y-%m-%d %H:%M:%S')
-  # unix_time = datetime.timestamp(date_format)
   t = pd.Timestamp(startTime)
   unix_time = time.mktime(t.timetuple())
   return unix_time

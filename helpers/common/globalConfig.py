@@ -16,3 +16,5 @@ NCC_DIR = os.getenv('NCC_DIR')
 NCC2_DIR = os.getenv('NCC2_DIR')
 NCC_GRAPH_DIR = os.getenv('NCC_GRAPH_DIR')
 OUT_DIR = os.getenv('OUT_DIR')
+
+ABLATION = os.getenv('ABLATION')
