@@ -5,6 +5,7 @@ from helpers.utilities.watcher import *
 from helpers.common.main import *
 from helpers.utilities.dirManagement import *
 from helpers.utilities.csvGenerator import *
+from helpers.utilities.dirManagement import checkDir
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -36,8 +37,8 @@ def main(feature):
   botnetDf.boxplot(showfliers=False)
   plt.xticks(rotation=90)
   plt.subplots_adjust(bottom=0.25)
-  plt.savefig('collections/'+feature+'-botnet-boxplot.png')
-  botnetDf.describe().transpose().to_csv('collections/'+feature+'-botnet-describe.csv')
+  plt.savefig(OUT_DIR+''+feature+'-botnet-boxplot.png')
+  botnetDf.describe().transpose().to_csv(OUT_DIR+''+feature+'-botnet-describe.csv')
 
   plt.figure()
   backgroundEquate = equateListLength(backgroundDiff)
@@ -45,8 +46,8 @@ def main(feature):
   backgroundDf.boxplot(showfliers=False)
   plt.xticks(rotation=90)
   plt.subplots_adjust(bottom=0.25)
-  plt.savefig('collections/'+feature+'-background-boxplot.png')
-  backgroundDf.describe().transpose().to_csv('collections/'+feature+'-background-describe.csv')
+  plt.savefig(OUT_DIR+''+feature+'-background-boxplot.png')
+  backgroundDf.describe().transpose().to_csv(OUT_DIR+''+feature+'-background-describe.csv')
 
   plt.figure()
   normalEquate = equateListLength(normalDiff)
@@ -54,23 +55,40 @@ def main(feature):
   normalDf.boxplot(showfliers=False)
   plt.xticks(rotation=90)
   plt.subplots_adjust(bottom=0.25)
-  plt.savefig('collections/'+feature+'-normal-boxplot.png')
-  normalDf.describe().transpose().to_csv('collections/'+feature+'-normal-describe.csv')
+  plt.savefig(OUT_DIR+''+feature+'-normal-boxplot.png')
+  normalDf.describe().transpose().to_csv(OUT_DIR+''+feature+'-normal-describe.csv')
 
 def flow(datasetName, stringDatasetName, shortName, selected, feature):
-  ctx=feature+' Analysis with Statistical Approach'
+  ctx=feature+' Analysis with statistical approach '+shortName+'-'+selected
   start = watcherStart(ctx)
   sequenceOf = 'SrcAddr'
-
+  
+  checkDir(OUT_DIR+'split/')
   df = loader.binetflow(datasetName, selected, stringDatasetName)
   df['ActivityLabel'] = df['Label'].apply(preProcessing.labelSimplier)
   df['Unix'] = df['StartTime'].apply(preProcessing.timeToUnix).fillna(0)
-  df = df.sort_values(by=[sequenceOf, 'StartTime', 'ActivityLabel'])
-  df['Diff'] = df['Unix'].diff().apply(lambda x: x if x >= 0 else None)
 
-  train, test = loader.splitDataFrameWithIndex(df)
-  train.to_csv('collections/split/'+shortName+'-'+selected+'-train.csv', index=False, header=False)
-  test.to_csv('collections/split/'+shortName+'-'+selected+'-test.csv', index=False, header=False)
+  if stringDatasetName == 'ctu' and selected == 'scenario7':
+    train=df
+    test=df
+  else:
+    train, test = loader.splitDataFrameWithIndex(df)
+
+  # generate diff feature on test data
+  train = train.sort_values(by=[sequenceOf, 'Unix'])
+  train = preProcessing.calculate_diff(train)
+  
+  # generate diff feature on test data
+  test = test.sort_values(by=[sequenceOf, 'Unix'])
+  test = preProcessing.calculate_diff(test)
+
+  # export the data
+  checkDir(OUT_DIR+'split/train/')
+  checkDir(OUT_DIR+'split/test/')
+  if stringDatasetName != 'ctu' and selected != 'scenario7':
+    train.to_csv(OUT_DIR+'split/train/'+shortName+'-'+selected+'.csv', index=False, header=True)
+  
+  test.to_csv(OUT_DIR+'split/test/'+shortName+'-'+selected+'.csv', index=False, header=True)
 
   botnet = train[train['ActivityLabel'] == 'botnet']
   normal = train[train['ActivityLabel'] == 'normal']
@@ -85,7 +103,7 @@ def flow(datasetName, stringDatasetName, shortName, selected, feature):
   backgroundDiff[datasetVariableName] = tgBackground
   normalDiff[datasetVariableName] = tgNormal
 
-  watcherEnd(ctx, start)
+  watcherEnd(ctx, start, True)
 
 def equateListLength(dct):
   max_length = max(len(lst) for lst in dct.values())

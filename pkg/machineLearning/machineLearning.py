@@ -1,52 +1,60 @@
 from helpers.utilities.watcher import *
 import helpers.utilities.csvGenerator as csv
 
+import time
 import pickle
+import numpy as np
 from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, ExtraTreesClassifier
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import *
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
+from helpers.common.globalConfig import OUT_DIR
 
 
 algorithmDict = {
-  'decisionTree': DecisionTreeClassifier(),
-  'randomForest': RandomForestClassifier(),
-  'naiveBayes': GaussianNB(),
+  'decisionTree': DecisionTreeClassifier(criterion='entropy', max_depth=13),
   'logisticRegression' : LogisticRegression(),
+  'naiveBayes': MultinomialNB(alpha=0.5, fit_prior=False),
+
+  'adaboost': AdaBoostClassifier(n_estimators=600, learning_rate=1.0),
+  'extraTree': ExtraTreesClassifier(n_estimators=400, criterion='entropy'),
   'xGBoost': GradientBoostingClassifier(),
-  # 'svc' : SVC(),
-  # 'knn': KNeighborsClassifier(),
-  # 'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
+  'randomForest': RandomForestClassifier(n_estimators=1000, criterion='entropy', max_features='log2'),
+  
+  'knn': KNeighborsClassifier(n_neighbors=13, metric='manhattan', weights='uniform'),
+  
+  'svc' : SVC(),
+  'ann': MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(15,), random_state=1)
 }
 
-def modelFileName(algorithm): return 'collections/'+algorithm+'.pkl'
+def modelFileName(algorithm): return OUT_DIR+''+algorithm+'.pkl'
 
-def modelling(x, y, algorithm='randomForest'):
-  ctx= 'Training Model With: '+algorithm.upper()
+def modelling(x, y, graphDetail, algorithm='randomForest'):
+  ctx= str(time.time())+' | Training Model With: '+algorithm.upper()
   start= watcherStart(ctx)
 
   model = algorithmDict[algorithm]
   model.fit(x, y)
-  pickle.dump(model, open(modelFileName(algorithm), 'wb'))
+  pickle.dump(model, open(modelFileName(algorithm+'-'+graphDetail), 'wb'))
 
   watcherEnd(ctx, start)
 
-def classification(x, algorithm='randomForest'):
+def classification(x, graphDetail, algorithm='randomForest'):
   ctx= 'Classifying Data - '+algorithm
   start= watcherStart(ctx)
 
-  model = pickle.load(open(modelFileName(algorithm), 'rb'))
+  model = pickle.load(open(modelFileName(algorithm+'-'+graphDetail), 'rb'))
   predictionResult = model.predict(x)
 
   watcherEnd(ctx, start)
   return predictionResult
 
 def evaluation(ctx, y, predictionResult, algorithm='randomForest'):
-  tn, fp, fn, tp = confusion_matrix(y, predictionResult).ravel()
+  tn, fp, fn, tp = confusion_matrix(y, predictionResult, labels=[0,1]).ravel()
 
   print('\nAlgorithm\t\t\t: '+algorithm)
   print('\nTotal input data\t\t\t: '+str(y.shape[0]))

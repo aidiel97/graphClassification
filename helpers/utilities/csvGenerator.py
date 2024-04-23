@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime
 from helpers.utilities.watcher import *
+from helpers.common.globalConfig import OUT_DIR
 
 def similarityResult(botnetUniqueSelection, normalUniqueSelection, botnetRecord, normalRecord, samplingRule, decompositor, similarityResult):
   ctx= 'Export Similarity Result'
@@ -29,7 +30,11 @@ def classificationResult(classificationContext, algorithm, tn, fp, fn, tp):
   ctx= 'Export Classification Result'
   start= watcherStart(ctx)
   # list of column names 
-  field_names = ['CreatedAt','Algorithm','TN','FP','FN', 'TP', 'ClassificationContext']
+  field_names = ['CreatedAt', 'Algorithm', 'TN', 'FP', 'FN', 'TP', 'Accuracy', 'Precision', 'Recall', 'F1-score', 'ClassificationContext']
+  accuracy = (tp+tn)/(tp+tn+fp+fn)
+  precision = tp/(tp+fp)
+  recall = tp/(tp+fn)
+  f1 = (2*precision*recall)/(precision+recall)
   # Dictionary
   dict = {
     "CreatedAt": datetime.now(),
@@ -38,10 +43,14 @@ def classificationResult(classificationContext, algorithm, tn, fp, fn, tp):
     "TN": tn,
     "FP": fp,
     "FN": fn,
-    "TP": tp
+    "TP": tp,
+    "Accuracy": accuracy,
+    "Precision": precision,
+    "Recall": recall,
+    "F1-score": f1,
   }
 
-  with open('collections/classification_results.csv', 'a', newline='') as csv_file:
+  with open(OUT_DIR+'classification_results.csv', 'a', newline='') as csv_file:
     dict_object = csv.DictWriter(csv_file, fieldnames=field_names) 
     dict_object.writerow(dict)
 

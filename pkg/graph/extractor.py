@@ -1,24 +1,35 @@
-import networkx as nx
 import pandas as pd
-from tqdm import tqdm
-import time
-
-import helpers.utilities.dataLoader as loader
-import pkg.preProcessing.transform as pp
 
 from helpers.utilities.watcher import *
 from helpers.common.main import *
-from helpers.utilities.csvGenerator import exportWithArrayOfObject
 from pkg.graph.models import *
 from pkg.graph.generator import *
+from helpers.utilities.dirManagement import checkDir
 
 def extractGraph(df, datasetDetail):
-    ctx = 'Graph based analysis - Graph to Tabular'
+    ctx = 'Graph based analysis - Graph to Tabular' 
     start = watcherStart(ctx)
     srcId = ['Src-Id']
     dstId = ['Dst-Id']
+    
+    if isinstance(datasetDetail, str):
+        datasetName = datasetDetail.replace(OUT_DIR+"split/", "")
+        datasetName = datasetName.replace(".csv", "")
+        detailData = "test/"
+        if "train/" in datasetName:
+            datasetName = datasetName.replace("train/","")
+            detailData = "train/"
+        else:
+            datasetName = datasetName.replace("test/","")
 
-    listBotnetAddress = ['147.32.84.165', '147.32.84.191', '147.32.84.192', '147.32.84.193', '147.32.84.204', '147.32.84.205', '147.32.84.206', '147.32.84.207', '147.32.84.208', '147.32.84.209']
+        componentDatasetName = datasetName.split('-')
+        stringDatasetName = componentDatasetName[0]
+        stringSubDatasetName = componentDatasetName[1]
+    else:
+        stringDatasetName = datasetDetail['stringDatasetName']
+        stringSubDatasetName = datasetDetail['selected']
+    
+    listBotnetAddress = detailBotCount[stringDatasetName][stringSubDatasetName]
     
     #out degree
     node_src_df = df.groupby(srcId).agg(OutDegree = ("Dst-Id", "nunique"),IntensityOutDegree = ("Dst-Id", "count"))
@@ -44,6 +55,7 @@ def extractGraph(df, datasetDetail):
     src_df.fillna(0)
     src_df['Address'] = src_df['Src-Id'].str.split('-').str[0]
     src_df['Label'] = src_df['Address'].apply(lambda x: 'botnet' if x in listBotnetAddress else 'normal')
+    src_df['SequenceId'] = src_df['Src-Id']
     src_df = src_df[['Address'] + [col for col in src_df.columns if col != 'Address']]
 
     #in degree
@@ -70,18 +82,13 @@ def extractGraph(df, datasetDetail):
     dst_df.fillna(0)
     dst_df['Address'] = dst_df['Dst-Id'].str.split('-').str[0]
     dst_df['Label'] = dst_df['Address'].apply(lambda x: 'botnet' if x in listBotnetAddress else 'normal')
+    dst_df['SequenceId'] = dst_df['Dst-Id']
     dst_df = dst_df[['Address'] + [col for col in dst_df.columns if col != 'Address']]
     
-    # FOR EXPORT, check the variable is string or dictionary
-    if isinstance(datasetDetail, str):
-        datasetName = datasetDetail.replace("collections/split/", "")
-        datasetName = datasetName.replace(".csv", "")
-        src_df.to_csv('collections/extract/'+datasetName+'-out.csv', index=False)
-        dst_df.to_csv('collections/extract/'+datasetName+'-in.csv', index=False)
-    else:
-        src_df.to_csv('collections/extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-out.csv', index=False)
-        dst_df.to_csv('collections/extract/'+datasetDetail['stringDatasetName']+'-'+datasetDetail['selected']+'-in.csv', index=False)
-    
+    checkDir(OUT_DIR+'extract/')
+    checkDir(OUT_DIR+'extract/'+detailData)
+    src_df.to_csv(OUT_DIR+'extract/'+detailData+stringDatasetName+'-'+stringSubDatasetName+'-out.csv', index=False)
+    dst_df.to_csv(OUT_DIR+'extract/'+detailData+stringDatasetName+'-'+stringSubDatasetName+'-in.csv', index=False)
     # Print a completion message
     print("Processing complete.")
     watcherEnd(ctx, start)
