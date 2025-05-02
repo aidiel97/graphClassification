@@ -68,7 +68,7 @@ def extractGraph(df, datasetDetail):
     #group by all categorical column
     proto_src_df = categorical_stats(df, groupby_col=srcId, target_col='Proto', prefix='Proto')
     dir_src_df = categorical_stats(df, groupby_col=srcId, target_col='Dir', prefix='Dir')
-    port_src_df = categorical_stats(df, groupby_col=srcId, target_col='Port', prefix='Port')
+    port_src_df = categorical_stats(df, groupby_col=srcId, target_col='Sport', prefix='Port')
     state_src_df = categorical_stats(df, groupby_col=srcId, target_col='State', prefix='State')
 
     src_df = pd.merge(
@@ -105,7 +105,7 @@ def extractGraph(df, datasetDetail):
     #group by all categorical column
     proto_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Proto', prefix='Proto')
     dir_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Dir', prefix='Dir')
-    port_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Port', prefix='Port')
+    port_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Dport', prefix='Port')
     state_dst_df = categorical_stats(df, groupby_col=dstId, target_col='State', prefix='State')
 
     dst_df = pd.merge(
