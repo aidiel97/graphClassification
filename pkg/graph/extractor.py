@@ -6,6 +6,25 @@ from pkg.graph.models import *
 from pkg.graph.generator import *
 from helpers.utilities.dirManagement import checkDir
 
+from scipy.stats import entropy
+
+def categorical_stats(df, groupby_col, target_col, prefix=None):
+    if prefix is None:
+        prefix = target_col
+
+    def _stats(group):
+        counts = group[target_col].value_counts()
+        probs = counts / counts.sum()
+
+        return pd.Series({
+            f'{prefix}Entropy': entropy(probs, base=2),
+            f'{prefix}Gini': 1 - (probs**2).sum(),
+            f'{prefix}UniqueCount': counts.size,
+            f'{prefix}ModeProportion': probs.max()
+        })
+
+    return df.groupby(groupby_col).apply(_stats).reset_index()
+
 def extractGraph(df, datasetDetail):
     ctx = 'Graph based analysis - Graph to Tabular' 
     start = watcherStart(ctx)
@@ -46,11 +65,21 @@ def extractGraph(df, datasetDetail):
     unix_src_df = df.groupby(srcId)['Unix'].agg(['min', 'max']).reset_index()
     unix_src_df = unix_src_df.rename(columns={'min': 'OutStartTime','max': 'OutEndTime'})
 
+    #group by all categorical column
+    proto_src_df = categorical_stats(df, groupby_col=srcId, target_col='Proto', prefix='Proto')
+    dir_src_df = categorical_stats(df, groupby_col=srcId, target_col='Dir', prefix='Dir')
+    port_src_df = categorical_stats(df, groupby_col=srcId, target_col='Port', prefix='Port')
+    state_src_df = categorical_stats(df, groupby_col=srcId, target_col='State', prefix='State')
+
     src_df = pd.merge(
         node_src_df, result_src_df, on='Src-Id', how='inner').merge(
             dur_src_df, on='Src-Id', how='inner').merge(
                 diff_src_df, on='Src-Id', how='inner').merge(
-                    unix_src_df, on='Src-Id', how='inner')
+                    unix_src_df, on='Src-Id', how='inner').merge(
+                        proto_src_df, on='Src-Id', how='inner').merge(
+                            dir_src_df, on='Src-Id', how='inner').merge(
+                                port_src_df, on='Src-Id', how='inner').merge(
+                                    state_src_df, on='Src-Id', how='inner')
     
     src_df.fillna(0)
     src_df['Address'] = src_df['Src-Id'].str.split('-').str[0]
@@ -73,11 +102,21 @@ def extractGraph(df, datasetDetail):
     unix_dst_df = df.groupby(dstId)['Unix'].agg(['min', 'max']).reset_index()
     unix_dst_df = unix_dst_df.rename(columns={'min': 'InStartTime','max': 'InEndTime'})
 
+    #group by all categorical column
+    proto_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Proto', prefix='Proto')
+    dir_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Dir', prefix='Dir')
+    port_dst_df = categorical_stats(df, groupby_col=dstId, target_col='Port', prefix='Port')
+    state_dst_df = categorical_stats(df, groupby_col=dstId, target_col='State', prefix='State')
+
     dst_df = pd.merge(
         node_dst_df, result_dst_df, on='Dst-Id', how='inner').merge(
             dur_dst_df, on='Dst-Id', how='inner').merge(
                 diff_dst_df, on='Dst-Id', how='inner').merge(
-                    unix_dst_df, on='Dst-Id', how='inner')
+                    unix_dst_df, on='Dst-Id', how='inner').merge(
+                        proto_dst_df, on='Dst-Id', how='inner').merge(
+                            dir_dst_df, on='Dst-Id', how='inner').merge(
+                                port_dst_df, on='Dst-Id', how='inner').merge(
+                                    state_dst_df, on='Dst-Id', how='inner')
     
     dst_df.fillna(0)
     dst_df['Address'] = dst_df['Dst-Id'].str.split('-').str[0]
