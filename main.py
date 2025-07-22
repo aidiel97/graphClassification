@@ -1,4 +1,4 @@
-"""Paralel Botnet Data Forensic"""
+"""Botnet Detection with Network Graph Classification"""
 """Writen By: M. Aidiel Rachman Putra"""
 """Organization: Net-Centic Computing Laboratory | Institut Teknologi Sepuluh Nopember"""
 
